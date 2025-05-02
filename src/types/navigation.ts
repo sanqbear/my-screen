@@ -1,5 +1,8 @@
 export type RootStackParamList = {
   Home: undefined;
+  RecentList: undefined;
+  ArtworkList: undefined;
+  HistoryList: undefined;
   Setting: undefined;
   // 다른 화면들도 여기에 추가할 수 있습니다
 };

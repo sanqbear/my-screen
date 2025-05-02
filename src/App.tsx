@@ -10,12 +10,14 @@ import {DrawerNavigationProp} from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import HomeScreen from '@/screens/HomeScreen';
 import SettingScreen from '@/screens/SettingScreen';
+import RecentListScreen from '@/screens/RecentListScreen';
 import useStore from '@/store/useStore';
 import {lightTheme, darkTheme} from '@/types/theme';
 import '@/i18n';
 import {useTranslation} from 'react-i18next';
 import RootStackParamList from '@/types/navigation';
-
+import ArtworkListScreen from './screens/ArtworkListScreen';
+import HistoryListScreen from './screens/HistoryListScreen';
 const Drawer = createDrawerNavigator<RootStackParamList>();
 
 const MenuButton = React.memo(
@@ -37,6 +39,18 @@ const MenuDrawerContent = React.memo(
 
     const handleHomePress = useCallback(
       () => navigation.navigate('Home'),
+      [navigation],
+    );
+    const handleRecentListPress = useCallback(
+      () => navigation.navigate('RecentList'),
+      [navigation],
+    );
+    const handleArtworkListPress = useCallback(
+      () => navigation.navigate('ArtworkList'),
+      [navigation],
+    );
+    const handleHistoryListPress = useCallback(
+      () => navigation.navigate('HistoryList'),
       [navigation],
     );
     const handleSettingsPress = useCallback(
@@ -78,6 +92,57 @@ const MenuDrawerContent = React.memo(
           <Text
             style={[styles.drawerItemText, {color: currentTheme.colors.text}]}>
             {t('common.home')}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.drawerItem,
+            {borderBottomColor: currentTheme.colors.border},
+          ]}
+          onPress={handleRecentListPress}>
+          <Icon
+            name="clock"
+            size={24}
+            color={currentTheme.colors.text}
+            style={styles.drawerItemIcon}
+          />
+          <Text
+            style={[styles.drawerItemText, {color: currentTheme.colors.text}]}>
+            {t('common.recentList')}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.drawerItem,
+            {borderBottomColor: currentTheme.colors.border},
+          ]}
+          onPress={handleArtworkListPress}>
+          <Icon
+            name="bookshelf"
+            size={24}
+            color={currentTheme.colors.text}
+            style={styles.drawerItemIcon}
+          />
+          <Text
+            style={[styles.drawerItemText, {color: currentTheme.colors.text}]}>
+            {t('common.artworkList')}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.drawerItem,
+            {borderBottomColor: currentTheme.colors.border},
+          ]}
+          onPress={handleHistoryListPress}>
+          <Icon
+            name="history"
+            size={24}
+            color={currentTheme.colors.text}
+            style={styles.drawerItemIcon}
+          />
+          <Text
+            style={[styles.drawerItemText, {color: currentTheme.colors.text}]}>
+            {t('common.historyList')}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -147,6 +212,27 @@ function App(): React.JSX.Element {
           options={{
             title: t('common.home'),
             headerShown: false,
+          }}
+        />
+        <Drawer.Screen
+          name="RecentList"
+          component={RecentListScreen}
+          options={{
+            title: t('common.recentList'),
+          }}
+        />
+        <Drawer.Screen
+          name="ArtworkList"
+          component={ArtworkListScreen}
+          options={{
+            title: t('common.artworkList'),
+          }}
+        />
+        <Drawer.Screen
+          name="HistoryList"
+          component={HistoryListScreen}
+          options={{
+            title: t('common.historyList'),
           }}
         />
         <Drawer.Screen

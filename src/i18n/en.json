@@ -2,7 +2,10 @@
   "common": {
     "menu": "Menu",
     "home": "Home",
-    "settings": "Settings",
+    "recentList": "Recent Artworks",
+    "historyList": "History",
+    "artworkList": "Artworks",
+    "settings": "Setting",
     "confirm": "Confirm",
     "cancel": "Cancel",
     "error": "Error",

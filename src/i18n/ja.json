@@ -2,6 +2,9 @@
   "common": {
     "menu": "メニュー",
     "home": "ホーム",
+    "recentList": "最近の作品",
+    "historyList": "履歴",
+    "artworkList": "作品",
     "settings": "設定",
     "confirm": "確認",
     "cancel": "キャンセル",

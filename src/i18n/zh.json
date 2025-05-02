@@ -2,6 +2,9 @@
   "common": {
     "menu": "菜单",
     "home": "首页",
+    "recentList": "最近",
+    "artworkList": "作品",
+    "historyList": "历史",
     "settings": "设置",
     "confirm": "确认",
     "cancel": "取消",

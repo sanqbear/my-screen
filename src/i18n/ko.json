@@ -2,6 +2,9 @@
   "common": {
     "menu": "메뉴",
     "home": "홈",
+    "recentList": "최신 작품",
+    "artworkList": "작품 목록",
+    "historyList": "감상 기록",
     "settings": "설정",
     "confirm": "확인",
     "cancel": "취소",

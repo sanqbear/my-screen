@@ -10,10 +10,13 @@ import {Artwork as ArtworkType} from '@/helpers/parser';
 import Artwork from './Artwork';
 import {useTranslation} from 'react-i18next';
 import {Theme} from '@/types/theme';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import RootStackParamList from '@/types/navigation';
 
 interface RecommendArtworksProps {
   artworks: ArtworkType[];
   theme: Theme;
+  navigation: NativeStackNavigationProp<RootStackParamList>;
 }
 
 const MemoizedArtwork = React.memo(Artwork);
@@ -21,6 +24,7 @@ const MemoizedArtwork = React.memo(Artwork);
 function RecommendArtworks({
   artworks,
   theme,
+  navigation,
 }: RecommendArtworksProps): React.JSX.Element {
   const {t} = useTranslation();
 
@@ -41,7 +45,7 @@ function RecommendArtworks({
         <TouchableOpacity
           style={styles.moreButton}
           onPress={() => {
-            // TODO: 더보기 페이지로 이동
+            navigation.navigate('ArtworkList');
           }}>
           <Text style={[styles.moreText, {color: theme.colors.text}]}>
             {t('common.more')}

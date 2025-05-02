@@ -80,13 +80,24 @@ function HomeLayout(): React.JSX.Element {
           />
         }>
         <View style={styles.section}>
-          <MemoizedRecentArtworks artworks={artworks.recent} theme={currentTheme} />
+          <MemoizedRecentArtworks
+            artworks={artworks.recent}
+            theme={currentTheme}
+            navigation={navigation}
+          />
         </View>
         <View style={styles.section}>
-          <MemoizedRecommendArtworks artworks={artworks.recommend} theme={currentTheme} />
+          <MemoizedRecommendArtworks
+            artworks={artworks.recommend}
+            theme={currentTheme}
+            navigation={navigation}
+          />
         </View>
         <View style={styles.section}>
-          <MemoizedWeeklyArtworks artworks={artworks.weekly} theme={currentTheme} />
+          <MemoizedWeeklyArtworks
+            artworks={artworks.weekly}
+            theme={currentTheme}
+          />
         </View>
       </ScrollView>
       <MessagePopup

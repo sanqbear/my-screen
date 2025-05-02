@@ -1,18 +1,31 @@
 import React, {useMemo} from 'react';
-import {View, ScrollView, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  View,
+  ScrollView,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import {Artwork as ArtworkType} from '@/helpers/parser';
 import Artwork from './Artwork';
 import {useTranslation} from 'react-i18next';
 import {Theme} from '@/types/theme';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import RootStackParamList from '@/types/navigation';
 
 interface RecentArtworksProps {
   artworks: ArtworkType[];
   theme: Theme;
+  navigation: NativeStackNavigationProp<RootStackParamList>;
 }
 
 const MemoizedArtwork = React.memo(Artwork);
 
-function RecentArtworks({artworks, theme}: RecentArtworksProps): React.JSX.Element {
+function RecentArtworks({
+  artworks,
+  theme,
+  navigation,
+}: RecentArtworksProps): React.JSX.Element {
   const {t} = useTranslation();
 
   const artworkList = useMemo(
@@ -32,7 +45,7 @@ function RecentArtworks({artworks, theme}: RecentArtworksProps): React.JSX.Eleme
         <TouchableOpacity
           style={styles.moreButton}
           onPress={() => {
-            // TODO: 더보기 페이지로 이동
+            navigation.navigate('RecentList');
           }}>
           <Text style={[styles.moreText, {color: theme.colors.text}]}>
             {t('common.more')}
