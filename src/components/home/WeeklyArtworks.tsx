@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {
   View,
   ScrollView,
@@ -8,30 +8,42 @@ import {
 } from 'react-native';
 import {Artwork} from '@/helpers/parser';
 import {useTranslation} from 'react-i18next';
+import {Theme} from '@/types/theme';
 
 interface WeeklyArtworksProps {
   artworks: Artwork[];
+  theme: Theme;
 }
 
-function WeeklyArtworks({artworks}: WeeklyArtworksProps): React.JSX.Element {
+function WeeklyArtworks({artworks, theme}: WeeklyArtworksProps): React.JSX.Element {
   const {t} = useTranslation();
+
+  const artworkList = useMemo(
+    () =>
+      artworks.map(artwork => (
+        <TouchableOpacity
+          key={artwork.id}
+          style={[styles.item, {borderBottomColor: theme.colors.border}]}
+          onPress={() => {
+            // TODO: 작품 상세 페이지로 이동
+          }}>
+          <Text style={[styles.itemTitle, {color: theme.colors.text}]}>
+            {artwork.title}
+          </Text>
+        </TouchableOpacity>
+      )),
+    [artworks, theme],
+  );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{t('home.weeklyArtworks')}</Text>
+      <Text style={[styles.title, {color: theme.colors.text}]}>
+        {t('home.weeklyArtworks')}
+      </Text>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}>
-        {artworks.map(artwork => (
-          <TouchableOpacity
-            key={artwork.id}
-            style={styles.item}
-            onPress={() => {
-              // TODO: 작품 상세 페이지로 이동
-            }}>
-            <Text style={styles.itemTitle}>{artwork.title}</Text>
-          </TouchableOpacity>
-        ))}
+        {artworkList}
       </ScrollView>
     </View>
   );
@@ -53,7 +65,6 @@ const styles = StyleSheet.create({
   item: {
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
   },
   itemTitle: {
     fontSize: 16,

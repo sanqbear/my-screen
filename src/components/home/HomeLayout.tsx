@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useEffect, useState, useCallback, useMemo} from 'react';
 import {View, StyleSheet, ScrollView, RefreshControl} from 'react-native';
 import RecentArtworks from './RecentArtworks';
 import RecommendArtworks from './RecommendArtworks';
@@ -12,6 +12,10 @@ import MessagePopup from '@/components/common/MessagePopup';
 import {useTranslation} from 'react-i18next';
 import {parseHomeArtworks, HomeArtworks} from '@/helpers/parser';
 
+const MemoizedRecentArtworks = React.memo(RecentArtworks);
+const MemoizedRecommendArtworks = React.memo(RecommendArtworks);
+const MemoizedWeeklyArtworks = React.memo(WeeklyArtworks);
+
 function HomeLayout(): React.JSX.Element {
   const {theme, apiUrl} = useStore();
   const navigation =
@@ -23,7 +27,10 @@ function HomeLayout(): React.JSX.Element {
     recommend: [],
     weekly: [],
   });
-  const currentTheme = theme === 'light' ? lightTheme : darkTheme;
+  const currentTheme = useMemo(
+    () => (theme === 'light' ? lightTheme : darkTheme),
+    [theme],
+  );
   const {t} = useTranslation();
 
   const fetchData = useCallback(async () => {
@@ -73,13 +80,13 @@ function HomeLayout(): React.JSX.Element {
           />
         }>
         <View style={styles.section}>
-          <RecentArtworks artworks={artworks.recent} />
+          <MemoizedRecentArtworks artworks={artworks.recent} theme={currentTheme} />
         </View>
         <View style={styles.section}>
-          <RecommendArtworks artworks={artworks.recommend} />
+          <MemoizedRecommendArtworks artworks={artworks.recommend} theme={currentTheme} />
         </View>
         <View style={styles.section}>
-          <WeeklyArtworks artworks={artworks.weekly} />
+          <MemoizedWeeklyArtworks artworks={artworks.weekly} theme={currentTheme} />
         </View>
       </ScrollView>
       <MessagePopup

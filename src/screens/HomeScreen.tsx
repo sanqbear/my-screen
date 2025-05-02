@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {StyleSheet, TouchableOpacity, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import useStore from '@/store/useStore';
@@ -19,7 +19,10 @@ const MenuButton = React.memo(
 const HomeScreen = () => {
   const {theme} = useStore();
   const navigation = useNavigation<DrawerNavigationProp<RootStackParamList>>();
-  const currentTheme = theme === 'light' ? lightTheme : darkTheme;
+  const currentTheme = useMemo(
+    () => (theme === 'light' ? lightTheme : darkTheme),
+    [theme],
+  );
 
   return (
     <SafeAreaView

@@ -1,44 +1,53 @@
 import React from 'react';
-import {View, Image, Text, StyleSheet, Dimensions} from 'react-native';
+import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {Artwork as ArtworkType} from '@/helpers/parser';
+import {Theme} from '@/types/theme';
 
 interface ArtworkProps {
   artwork: ArtworkType;
+  theme: Theme;
 }
 
-const {width} = Dimensions.get('window');
-const ITEM_WIDTH = width * 0.3;
-
-function Artwork({artwork}: ArtworkProps): React.JSX.Element {
+function Artwork({artwork, theme}: ArtworkProps): React.JSX.Element {
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => {
+        // TODO: 작품 상세 페이지로 이동
+      }}>
       <Image
-        source={{uri: artwork.thumbnailUrl || ''}}
+        source={{uri: artwork.thumbnailUrl || undefined}}
         style={styles.thumbnail}
-        resizeMode="cover"
       />
-      <Text style={styles.title} numberOfLines={2}>
-        {artwork.title}
-      </Text>
-    </View>
+      <View style={styles.info}>
+        <Text style={[styles.title, {color: theme.colors.text}]}>
+          {artwork.title}
+        </Text>
+      </View>
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: ITEM_WIDTH,
+    width: 150,
     marginRight: 10,
   },
   thumbnail: {
     width: '100%',
-    aspectRatio: 2 / 3,
+    height: 200,
     borderRadius: 8,
-    backgroundColor: '#f0f0f0',
+  },
+  info: {
+    marginTop: 8,
   },
   title: {
-    marginTop: 8,
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  author: {
     fontSize: 12,
-    color: '#333',
+    marginTop: 4,
   },
 });
 

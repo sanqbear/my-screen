@@ -1,26 +1,38 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {View, ScrollView, Text, StyleSheet} from 'react-native';
 import {Artwork as ArtworkType} from '@/helpers/parser';
 import Artwork from './Artwork';
 import {useTranslation} from 'react-i18next';
+import {Theme} from '@/types/theme';
 
 interface RecentArtworksProps {
   artworks: ArtworkType[];
+  theme: Theme;
 }
 
-function RecentArtworks({artworks}: RecentArtworksProps): React.JSX.Element {
+const MemoizedArtwork = React.memo(Artwork);
+
+function RecentArtworks({artworks, theme}: RecentArtworksProps): React.JSX.Element {
   const {t} = useTranslation();
+
+  const artworkList = useMemo(
+    () =>
+      artworks.map(artwork => (
+        <MemoizedArtwork key={artwork.id} artwork={artwork} theme={theme} />
+      )),
+    [artworks, theme],
+  );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{t('home.recentArtworks')}</Text>
+      <Text style={[styles.title, {color: theme.colors.text}]}>
+        {t('home.recentArtworks')}
+      </Text>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}>
-        {artworks.map(artwork => (
-          <Artwork key={artwork.id} artwork={artwork} />
-        ))}
+        {artworkList}
       </ScrollView>
     </View>
   );
