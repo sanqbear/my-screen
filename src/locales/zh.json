@@ -13,5 +13,14 @@
     "currentLanguage": "当前语言: {{language}}",
     "toggleTheme": "切换主题",
     "toggleLanguage": "切换语言"
+  },
+  "apiUrlLookup": {
+    "title": "API URL 查找",
+    "enterBaseUrl": "输入基本URL",
+    "startSearch": "开始搜索",
+    "stop": "停止",
+    "checking": "检查中: {url}",
+    "foundUrls": "找到的URL:",
+    "close": "关闭"
   }
 }

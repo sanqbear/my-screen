@@ -13,5 +13,14 @@
     "currentLanguage": "現在の言語: {{language}}",
     "toggleTheme": "テーマを切り替える",
     "toggleLanguage": "言語を切り替える"
+  },
+  "apiUrlLookup": {
+    "title": "API URL 検索",
+    "enterBaseUrl": "基本URLを入力してください",
+    "startSearch": "検索を開始",
+    "stop": "停止",
+    "checking": "確認中: {url}",
+    "foundUrls": "見つかったURL:",
+    "close": "閉じる"
   }
 }

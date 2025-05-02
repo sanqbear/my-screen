@@ -13,5 +13,14 @@
     "currentLanguage": "Current Language: {{language}}",
     "toggleTheme": "Toggle Theme",
     "toggleLanguage": "Toggle Language"
+  },
+  "apiUrlLookup": {
+    "title": "API URL Lookup",
+    "enterBaseUrl": "Enter base URL",
+    "startSearch": "Start Search",
+    "stop": "Stop",
+    "checking": "Checking: {url}",
+    "foundUrls": "Found URLs:",
+    "close": "Close"
   }
-} 
+}

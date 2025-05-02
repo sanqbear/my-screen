@@ -1,15 +1,17 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import useStore from '../store/useStore';
 import {lightTheme, darkTheme} from '../types/theme';
 import {useTranslation} from 'react-i18next';
 import {Language} from '../store/useStore';
+import ApiUrlLookupPopup from '../components/ApiUrlLookupPopup';
 
 const SettingScreen = () => {
   const {theme, language, setTheme, setLanguage} = useStore();
   const {t} = useTranslation();
   const currentTheme = theme === 'light' ? lightTheme : darkTheme;
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
@@ -60,6 +62,17 @@ const SettingScreen = () => {
           ))}
         </Picker>
       </View>
+
+      <TouchableOpacity
+        style={[styles.button, {backgroundColor: currentTheme.colors.primary}]}
+        onPress={() => setIsPopupVisible(true)}>
+        <Text style={styles.buttonText}>{t('apiUrlLookup.title')}</Text>
+      </TouchableOpacity>
+
+      <ApiUrlLookupPopup
+        visible={isPopupVisible}
+        onClose={() => setIsPopupVisible(false)}
+      />
     </View>
   );
 };
