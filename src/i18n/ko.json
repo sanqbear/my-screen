@@ -9,6 +9,9 @@
   },
   "home": {
     "title": "홈 화면",
+    "recentArtworks": "최근 작품",
+    "recommendArtworks": "추천 작품",
+    "weeklyArtworks": "주간 작품",
     "apiError": {
       "title": "오류",
       "message": "데이터를 가져오는데 실패했습니다. 설정 화면에서 API URL을 확인해주세요.",

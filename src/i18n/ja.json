@@ -9,6 +9,9 @@
   },
   "home": {
     "title": "ホーム画面",
+    "recentArtworks": "最近の作品",
+    "recommendArtworks": "おすすめの作品",
+    "weeklyArtworks": "週刊の作品",
     "apiError": {
       "title": "エラー",
       "message": "データの取得に失敗しました。設定画面でAPI URLを確認してください。",

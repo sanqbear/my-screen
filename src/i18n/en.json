@@ -9,6 +9,9 @@
   },
   "home": {
     "title": "Home Screen",
+    "recentArtworks": "Recent Artworks",
+    "recommendArtworks": "Recommend Artworks",
+    "weeklyArtworks": "Weekly Artworks",
     "apiError": {
       "title": "Error",
       "message": "Failed to fetch data. Please check the API URL in the settings screen.",

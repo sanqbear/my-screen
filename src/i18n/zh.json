@@ -9,6 +9,9 @@
   },
   "home": {
     "title": "首页",
+    "recentArtworks": "最近的作品",
+    "recommendArtworks": "推荐的作品",
+    "weeklyArtworks": "每周的作品",
     "apiError": {
       "title": "错误",
       "message": "获取数据失败。请在设置界面检查API URL。",

@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, ScrollView} from 'react-native';
+import React, {useEffect, useState, useCallback} from 'react';
+import {View, StyleSheet, ScrollView, RefreshControl} from 'react-native';
 import RecentArtworks from './RecentArtworks';
 import RecommendArtworks from './RecommendArtworks';
 import WeeklyArtworks from './WeeklyArtworks';
@@ -17,6 +17,7 @@ function HomeLayout(): React.JSX.Element {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [artworks, setArtworks] = useState<HomeArtworks>({
     recent: [],
     recommend: [],
@@ -25,25 +26,32 @@ function HomeLayout(): React.JSX.Element {
   const currentTheme = theme === 'light' ? lightTheme : darkTheme;
   const {t} = useTranslation();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-          throw new Error('API 호출에 실패했습니다.');
-        }
-        const html = await response.text();
-        const host = apiUrl.match(/^https?:\/\/[^/]+/)?.[0] || '';
-        const parsedArtworks = parseHomeArtworks(html, host);
-        setArtworks(parsedArtworks);
-      } catch (error) {
-        console.log(error);
-        setShowErrorPopup(true);
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await fetch(apiUrl);
+      if (!response.ok) {
+        throw new Error('API 호출에 실패했습니다.');
       }
-    };
-
-    fetchData();
+      const html = await response.text();
+      const host = apiUrl.match(/^https?:\/\/[^/]+/)?.[0] || '';
+      const parsedArtworks = parseHomeArtworks(html, host);
+      setArtworks(parsedArtworks);
+    } catch (error) {
+      console.log(error);
+      setShowErrorPopup(true);
+    } finally {
+      setRefreshing(false);
+    }
   }, [apiUrl]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchData();
+  }, [fetchData]);
 
   const handleErrorPopupConfirm = () => {
     setShowErrorPopup(false);
@@ -56,7 +64,14 @@ function HomeLayout(): React.JSX.Element {
         style={[
           styles.container,
           {backgroundColor: currentTheme.colors.background},
-        ]}>
+        ]}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={currentTheme.colors.primary}
+          />
+        }>
         <View style={styles.section}>
           <RecentArtworks artworks={artworks.recent} />
         </View>
