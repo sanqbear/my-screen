@@ -10,14 +10,18 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '@/types/navigation';
 import MessagePopup from '@/components/common/MessagePopup';
 import {useTranslation} from 'react-i18next';
-import {parseHomeArtworks, Artwork} from '@/helpers/parser';
+import {parseHomeArtworks, HomeArtworks} from '@/helpers/parser';
 
 function HomeLayout(): React.JSX.Element {
   const {theme, apiUrl} = useStore();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [showErrorPopup, setShowErrorPopup] = useState(false);
-  const [artworks, setArtworks] = useState<Artwork[]>([]);
+  const [artworks, setArtworks] = useState<HomeArtworks>({
+    recent: [],
+    recommend: [],
+    weekly: [],
+  });
   const currentTheme = theme === 'light' ? lightTheme : darkTheme;
   const {t} = useTranslation();
 
@@ -29,9 +33,11 @@ function HomeLayout(): React.JSX.Element {
           throw new Error('API 호출에 실패했습니다.');
         }
         const html = await response.text();
-        const parsedArtworks = parseHomeArtworks(html);
+        const host = apiUrl.match(/^https?:\/\/[^/]+/)?.[0] || '';
+        const parsedArtworks = parseHomeArtworks(html, host);
         setArtworks(parsedArtworks);
       } catch (error) {
+        console.log(error);
         setShowErrorPopup(true);
       }
     };
@@ -52,13 +58,13 @@ function HomeLayout(): React.JSX.Element {
           {backgroundColor: currentTheme.colors.background},
         ]}>
         <View style={styles.section}>
-          <RecentArtworks artworks={artworks} />
+          <RecentArtworks artworks={artworks.recent} />
         </View>
         <View style={styles.section}>
-          <RecommendArtworks artworks={artworks} />
+          <RecommendArtworks artworks={artworks.recommend} />
         </View>
         <View style={styles.section}>
-          <WeeklyArtworks artworks={artworks} />
+          <WeeklyArtworks artworks={artworks.weekly} />
         </View>
       </ScrollView>
       <MessagePopup
