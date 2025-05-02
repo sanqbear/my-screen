@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import useStore from '../store/useStore';
-import {lightTheme, darkTheme} from '../types/theme';
+import useStore from '@/store/useStore';
+import {lightTheme, darkTheme} from '@/types/theme';
 import {useTranslation} from 'react-i18next';
 
 const HomeScreen = () => {

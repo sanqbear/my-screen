@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
-import useStore from '../store/useStore';
-import {lightTheme, darkTheme} from '../types/theme';
+import useStore from '@/store/useStore';
+import {lightTheme, darkTheme} from '@/types/theme';
 import {useTranslation} from 'react-i18next';
-import {Language} from '../store/useStore';
-import ApiUrlLookupPopup from '../components/ApiUrlLookupPopup';
+import {Language} from '@/store/useStore';
+import ApiUrlLookupPopup from '@/components/ApiUrlLookupPopup';
 
 const SettingScreen = () => {
   const {theme, language, setTheme, setLanguage} = useStore();

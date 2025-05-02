@@ -1,16 +1,16 @@
 import React from 'react';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {
   createDrawerNavigator,
   DrawerContentComponentProps,
 } from '@react-navigation/drawer';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import HomeScreen from './src/screens/HomeScreen';
-import SettingScreen from './src/screens/SettingScreen';
-import useStore from './src/store/useStore';
-import {lightTheme, darkTheme} from './src/types/theme';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import './src/i18n';
+import HomeScreen from '@/screens/HomeScreen';
+import SettingScreen from '@/screens/SettingScreen';
+import useStore from '@/store/useStore';
+import {lightTheme, darkTheme} from '@/types/theme';
+import '@/i18n';
 import {useTranslation} from 'react-i18next';
 
 const Drawer = createDrawerNavigator();

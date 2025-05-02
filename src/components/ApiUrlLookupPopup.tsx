@@ -8,8 +8,8 @@ import {
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
-import useStore from '../store/useStore';
-import {lightTheme, darkTheme} from '../types/theme';
+import useStore from '@/store/useStore';
+import {lightTheme, darkTheme} from '@/types/theme';
 import {useTranslation} from 'react-i18next';
 
 interface ApiUrlLookupPopupProps {
@@ -121,9 +121,7 @@ const ApiUrlLookupPopup: React.FC<ApiUrlLookupPopupProps> = ({
 
         <View style={styles.buttonContainer}>
           {isSearching ? (
-            <TouchableOpacity
-              style={[styles.button, {backgroundColor: 'red'}]}
-              onPress={stopSearch}>
+            <TouchableOpacity style={[styles.stopButton]} onPress={stopSearch}>
               <Text style={styles.buttonText}>{t('apiUrlLookup.stop')}</Text>
             </TouchableOpacity>
           ) : (
@@ -253,6 +251,13 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
+  },
+  stopButton: {
+    padding: 10,
+    borderRadius: 5,
+    minWidth: 120,
+    alignItems: 'center',
+    backgroundColor: '#FF4444',
   },
 });
 
