@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Picker} from '@react-native-picker/picker';
@@ -9,24 +9,39 @@ import {Language} from '@/store/useStore';
 import ApiUrlLookupPopup from '@/components/settings/ApiUrlLookupPopup';
 import ApiUrlSetupPopup from '@/components/settings/ApiUrlSetupPopup';
 
-const SettingButton = React.memo(({onPress, title, color}: {onPress: () => void; title: string; color: string}) => (
-  <TouchableOpacity
-    style={[styles.button, {backgroundColor: color}]}
-    onPress={onPress}>
-    <Text style={styles.buttonText}>{title}</Text>
-  </TouchableOpacity>
-));
+const SettingButton = React.memo(
+  ({
+    onPress,
+    title,
+    color,
+  }: {
+    onPress: () => void;
+    title: string;
+    color: string;
+  }) => (
+    <TouchableOpacity
+      style={[styles.button, {backgroundColor: color}]}
+      onPress={onPress}>
+      <Text style={styles.buttonText}>{title}</Text>
+    </TouchableOpacity>
+  ),
+);
 
-const SettingText = React.memo(({text, color}: {text: string; color: string}) => (
-  <Text style={[styles.text, {color}]}>{text}</Text>
-));
+const SettingText = React.memo(
+  ({text, color}: {text: string; color: string}) => (
+    <Text style={[styles.text, {color}]}>{text}</Text>
+  ),
+);
 
 const SettingScreen = () => {
   const {theme, language, apiUrl, setTheme, setLanguage} = useStore();
   const {t} = useTranslation();
-  const currentTheme = theme === 'light' ? lightTheme : darkTheme;
   const [isLookupPopupVisible, setIsLookupPopupVisible] = useState(false);
   const [isSetupPopupVisible, setIsSetupPopupVisible] = useState(false);
+  const currentTheme = useMemo(
+    () => (theme === 'light' ? lightTheme : darkTheme),
+    [theme],
+  );
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
