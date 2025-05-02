@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import {View, ScrollView, Text, StyleSheet} from 'react-native';
+import {View, ScrollView, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {Artwork as ArtworkType} from '@/helpers/parser';
 import Artwork from './Artwork';
 import {useTranslation} from 'react-i18next';
@@ -25,9 +25,20 @@ function RecentArtworks({artworks, theme}: RecentArtworksProps): React.JSX.Eleme
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, {color: theme.colors.text}]}>
-        {t('home.recentArtworks')}
-      </Text>
+      <View style={styles.header}>
+        <Text style={[styles.title, {color: theme.colors.text}]}>
+          {t('home.recentArtworks')}
+        </Text>
+        <TouchableOpacity
+          style={styles.moreButton}
+          onPress={() => {
+            // TODO: 더보기 페이지로 이동
+          }}>
+          <Text style={[styles.moreText, {color: theme.colors.text}]}>
+            {t('common.more')}
+          </Text>
+        </TouchableOpacity>
+      </View>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -42,11 +53,22 @@ const styles = StyleSheet.create({
   container: {
     marginVertical: 10,
   },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+    marginHorizontal: 16,
+  },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
-    marginHorizontal: 16,
+  },
+  moreButton: {
+    padding: 4,
+  },
+  moreText: {
+    fontSize: 14,
   },
   scrollContent: {
     paddingHorizontal: 16,

@@ -5,7 +5,8 @@
     "settings": "Settings",
     "confirm": "Confirm",
     "cancel": "Cancel",
-    "error": "Error"
+    "error": "Error",
+    "more": "More"
   },
   "home": {
     "title": "Home Screen",

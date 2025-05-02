@@ -5,7 +5,8 @@
     "settings": "설정",
     "confirm": "확인",
     "cancel": "취소",
-    "error": "오류"
+    "error": "오류",
+    "more": "더보기"
   },
   "home": {
     "title": "홈 화면",
