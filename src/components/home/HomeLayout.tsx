@@ -10,12 +10,14 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '@/types/navigation';
 import MessagePopup from '@/components/common/MessagePopup';
 import {useTranslation} from 'react-i18next';
+import {parseHomeArtworks, Artwork} from '@/helpers/parser';
 
 function HomeLayout(): React.JSX.Element {
   const {theme, apiUrl} = useStore();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [artworks, setArtworks] = useState<Artwork[]>([]);
   const currentTheme = theme === 'light' ? lightTheme : darkTheme;
   const {t} = useTranslation();
 
@@ -27,8 +29,8 @@ function HomeLayout(): React.JSX.Element {
           throw new Error('API 호출에 실패했습니다.');
         }
         const html = await response.text();
-        console.log(html);
-        // TODO: HTML 데이터 처리 로직 추가
+        const parsedArtworks = parseHomeArtworks(html);
+        setArtworks(parsedArtworks);
       } catch (error) {
         setShowErrorPopup(true);
       }
@@ -50,13 +52,13 @@ function HomeLayout(): React.JSX.Element {
           {backgroundColor: currentTheme.colors.background},
         ]}>
         <View style={styles.section}>
-          <RecentArtworks />
+          <RecentArtworks artworks={artworks} />
         </View>
         <View style={styles.section}>
-          <RecommendArtworks />
+          <RecommendArtworks artworks={artworks} />
         </View>
         <View style={styles.section}>
-          <WeeklyArtworks />
+          <WeeklyArtworks artworks={artworks} />
         </View>
       </ScrollView>
       <MessagePopup

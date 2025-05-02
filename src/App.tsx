@@ -14,13 +14,9 @@ import useStore from '@/store/useStore';
 import {lightTheme, darkTheme} from '@/types/theme';
 import '@/i18n';
 import {useTranslation} from 'react-i18next';
+import RootStackParamList from '@/types/navigation';
 
-type RootParamList = {
-  Home: undefined;
-  Settings: undefined;
-};
-
-const Drawer = createDrawerNavigator<RootParamList>();
+const Drawer = createDrawerNavigator<RootStackParamList>();
 
 const MenuButton = React.memo(
   ({onPress, color}: {onPress: () => void; color: string}) => (
@@ -44,7 +40,7 @@ const MenuDrawerContent = React.memo(
       [navigation],
     );
     const handleSettingsPress = useCallback(
-      () => navigation.navigate('Settings'),
+      () => navigation.navigate('Setting'),
       [navigation],
     );
 
@@ -118,7 +114,7 @@ function App(): React.JSX.Element {
     ({
       navigation,
     }: {
-      navigation: DrawerNavigationProp<RootParamList>;
+      navigation: DrawerNavigationProp<RootStackParamList>;
     }): DrawerNavigationOptions => ({
       headerStyle: {
         backgroundColor: currentTheme.colors.background,
@@ -154,7 +150,7 @@ function App(): React.JSX.Element {
           }}
         />
         <Drawer.Screen
-          name="Settings"
+          name="Setting"
           component={SettingScreen}
           options={{
             title: t('common.settings'),

@@ -6,11 +6,7 @@ import {lightTheme, darkTheme} from '@/types/theme';
 import {useNavigation} from '@react-navigation/native';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import HomeLayout from '@/components/home/HomeLayout';
-
-type RootParamList = {
-  Home: undefined;
-  Settings: undefined;
-};
+import RootStackParamList from '@/types/navigation';
 
 const MenuButton = React.memo(
   ({onPress, color}: {onPress: () => void; color: string}) => (
@@ -22,7 +18,7 @@ const MenuButton = React.memo(
 
 const HomeScreen = () => {
   const {theme} = useStore();
-  const navigation = useNavigation<DrawerNavigationProp<RootParamList>>();
+  const navigation = useNavigation<DrawerNavigationProp<RootStackParamList>>();
   const currentTheme = theme === 'light' ? lightTheme : darkTheme;
 
   return (
