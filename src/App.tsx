@@ -7,6 +7,7 @@ import {
   DrawerNavigationOptions,
 } from '@react-navigation/drawer';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import HomeScreen from '@/screens/HomeScreen';
 import SettingScreen from '@/screens/SettingScreen';
 import useStore from '@/store/useStore';
@@ -24,7 +25,7 @@ const Drawer = createDrawerNavigator<RootParamList>();
 const MenuButton = React.memo(
   ({onPress, color}: {onPress: () => void; color: string}) => (
     <TouchableOpacity onPress={onPress} style={styles.menuButton}>
-      <Text style={[styles.menuButtonText, {color}]}>☰</Text>
+      <Icon name="menu" size={24} color={color} />
     </TouchableOpacity>
   ),
 );
@@ -36,11 +37,6 @@ const MenuDrawerContent = React.memo(
     const currentTheme = useMemo(
       () => (theme === 'light' ? lightTheme : darkTheme),
       [theme],
-    );
-
-    const drawerItemStyle = useMemo(
-      () => [styles.drawerItem, {backgroundColor: currentTheme.colors.primary}],
-      [currentTheme.colors.primary],
     );
 
     const handleHomePress = useCallback(
@@ -58,7 +54,11 @@ const MenuDrawerContent = React.memo(
           styles.drawerContainer,
           {backgroundColor: currentTheme.colors.background},
         ]}>
-        <View style={styles.drawerHeader}>
+        <View
+          style={[
+            styles.drawerHeader,
+            {borderBottomColor: currentTheme.colors.border},
+          ]}>
           <Text
             style={[
               styles.drawerHeaderText,
@@ -67,11 +67,39 @@ const MenuDrawerContent = React.memo(
             {t('common.menu')}
           </Text>
         </View>
-        <TouchableOpacity style={drawerItemStyle} onPress={handleHomePress}>
-          <Text style={styles.drawerItemText}>{t('common.home')}</Text>
+        <TouchableOpacity
+          style={[
+            styles.drawerItem,
+            {borderBottomColor: currentTheme.colors.border},
+          ]}
+          onPress={handleHomePress}>
+          <Icon
+            name="home"
+            size={24}
+            color={currentTheme.colors.text}
+            style={styles.drawerItemIcon}
+          />
+          <Text
+            style={[styles.drawerItemText, {color: currentTheme.colors.text}]}>
+            {t('common.home')}
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={drawerItemStyle} onPress={handleSettingsPress}>
-          <Text style={styles.drawerItemText}>{t('common.settings')}</Text>
+        <TouchableOpacity
+          style={[
+            styles.drawerItem,
+            {borderBottomColor: currentTheme.colors.border},
+          ]}
+          onPress={handleSettingsPress}>
+          <Icon
+            name="cog"
+            size={24}
+            color={currentTheme.colors.text}
+            style={styles.drawerItemIcon}
+          />
+          <Text
+            style={[styles.drawerItemText, {color: currentTheme.colors.text}]}>
+            {t('common.settings')}
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -145,27 +173,26 @@ const styles = StyleSheet.create({
   drawerHeader: {
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
   },
   drawerHeaderText: {
     fontSize: 20,
     fontWeight: 'bold',
   },
   drawerItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 15,
-    margin: 5,
-    borderRadius: 5,
+    borderBottomWidth: 1,
+  },
+  drawerItemIcon: {
+    marginRight: 15,
   },
   drawerItemText: {
-    color: '#FFFFFF',
     fontSize: 16,
   },
   menuButton: {
     marginLeft: 15,
     padding: 10,
-  },
-  menuButtonText: {
-    fontSize: 24,
   },
 });
 
