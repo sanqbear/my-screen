@@ -9,13 +9,18 @@
   },
   "settings": {
     "title": "設定",
+    "theme": "テーマ",
+    "light": "ライト",
+    "dark": "ダーク",
+    "language": "言語",
+    "apiUrl": "API URL",
     "currentTheme": "現在のテーマ: {{theme}}",
     "currentLanguage": "現在の言語: {{language}}",
     "currentApiUrl": "現在のAPI URL: {{url}}",
     "toggleTheme": "テーマ切り替え",
     "toggleLanguage": "言語切り替え"
   },
-  "apiUrlLookup": {
+  "urlLookup": {
     "title": "API URL検索",
     "enterBaseUrl": "ベースURLを入力してください",
     "startSearch": "検索開始",
@@ -24,7 +29,7 @@
     "foundUrls": "見つかったURL:",
     "close": "閉じる"
   },
-  "apiUrlSetup": {
+  "urlSetup": {
     "title": "API URL設定",
     "enterUrl": "API URLを入力してください",
     "save": "保存",

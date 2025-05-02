@@ -9,6 +9,11 @@
   },
   "settings": {
     "title": "Settings",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "language": "Language",
+    "apiUrl": "API URL",
     "currentTheme": "Current Theme: {{theme}}",
     "currentLanguage": "Current Language: {{language}}",
     "currentApiUrl": "Current API URL: {{url}}",

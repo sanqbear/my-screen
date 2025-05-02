@@ -27,9 +27,20 @@ const SettingButton = React.memo(
   ),
 );
 
-const SettingText = React.memo(
-  ({text, color}: {text: string; color: string}) => (
-    <Text style={[styles.text, {color}]}>{text}</Text>
+const SettingItem = React.memo(
+  ({
+    title,
+    content,
+    color,
+  }: {
+    title: string;
+    content: string;
+    color: string;
+  }) => (
+    <View style={styles.settingItem}>
+      <Text style={[styles.settingTitle, {color}]}>{title}</Text>
+      <Text style={[styles.settingContent, {color}]}>{content}</Text>
+    </View>
   ),
 );
 
@@ -60,56 +71,63 @@ const SettingScreen = () => {
         styles.container,
         {backgroundColor: currentTheme.colors.background},
       ]}>
-      <SettingText
-        text={t('settings.currentTheme', {theme})}
-        color={currentTheme.colors.text}
-      />
-      <SettingText
-        text={t('settings.currentLanguage', {language})}
-        color={currentTheme.colors.text}
-      />
-      <SettingText
-        text={t('settings.currentApiUrl', {url: apiUrl})}
-        color={currentTheme.colors.text}
-      />
-
-      <SettingButton
-        onPress={toggleTheme}
-        title={t('settings.toggleTheme')}
-        color={currentTheme.colors.primary}
-      />
-
-      <View
-        style={[
-          styles.pickerContainer,
-          {backgroundColor: currentTheme.colors.background},
-        ]}>
-        <Picker
-          selectedValue={language}
-          onValueChange={(value: Language) => setLanguage(value)}
-          style={[styles.picker, {color: currentTheme.colors.text}]}>
-          {languages.map(lang => (
-            <Picker.Item
-              key={lang.code}
-              label={lang.name}
-              value={lang.code}
-              color={currentTheme.colors.text}
-            />
-          ))}
-        </Picker>
+      <View style={styles.settingsContainer}>
+        <SettingItem
+          title={t('settings.theme')}
+          content={t(`settings.${theme}`)}
+          color={currentTheme.colors.text}
+        />
+        <SettingItem
+          title={t('settings.language')}
+          content={languages.find(lang => lang.code === language)?.name || ''}
+          color={currentTheme.colors.text}
+        />
+        <SettingItem
+          title={t('settings.apiUrl')}
+          content={apiUrl}
+          color={currentTheme.colors.text}
+        />
       </View>
 
-      <SettingButton
-        onPress={() => setIsLookupPopupVisible(true)}
-        title={t('urlLookup.title')}
-        color={currentTheme.colors.primary}
-      />
+      <View style={styles.controlsContainer}>
+        <SettingButton
+          onPress={toggleTheme}
+          title={t('settings.toggleTheme')}
+          color={currentTheme.colors.primary}
+        />
 
-      <SettingButton
-        onPress={() => setIsSetupPopupVisible(true)}
-        title={t('urlSetup.title')}
-        color={currentTheme.colors.primary}
-      />
+        <View
+          style={[
+            styles.pickerContainer,
+            {backgroundColor: currentTheme.colors.background},
+          ]}>
+          <Picker
+            selectedValue={language}
+            onValueChange={(value: Language) => setLanguage(value)}
+            style={[styles.picker, {color: currentTheme.colors.text}]}>
+            {languages.map(lang => (
+              <Picker.Item
+                key={lang.code}
+                label={lang.name}
+                value={lang.code}
+                color={currentTheme.colors.text}
+              />
+            ))}
+          </Picker>
+        </View>
+
+        <SettingButton
+          onPress={() => setIsLookupPopupVisible(true)}
+          title={t('urlLookup.title')}
+          color={currentTheme.colors.primary}
+        />
+
+        <SettingButton
+          onPress={() => setIsSetupPopupVisible(true)}
+          title={t('urlSetup.title')}
+          color={currentTheme.colors.primary}
+        />
+      </View>
 
       <UrlLookupPopup
         visible={isLookupPopupVisible}
@@ -127,25 +145,42 @@ const SettingScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 20,
   },
-  text: {
+  settingsContainer: {
+    flex: 1,
+    gap: 20,
+  },
+  controlsContainer: {
+    gap: 15,
+    marginTop: 20,
+  },
+  settingItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  settingTitle: {
     fontSize: 16,
-    marginBottom: 10,
+    fontWeight: 'bold',
+  },
+  settingContent: {
+    fontSize: 16,
   },
   button: {
     padding: 10,
     borderRadius: 5,
-    marginTop: 10,
+    alignItems: 'center',
   },
   buttonText: {
     color: '#FFFFFF',
     fontSize: 16,
   },
   pickerContainer: {
-    width: '80%',
-    marginTop: 20,
+    width: '100%',
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
