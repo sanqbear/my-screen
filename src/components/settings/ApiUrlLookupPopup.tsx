@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
 import useStore from '@/store/useStore';
 import {lightTheme, darkTheme} from '@/types/theme';
 import {useTranslation} from 'react-i18next';
+import axios from 'axios';
 
 interface ApiUrlLookupPopupProps {
   visible: boolean;
@@ -21,15 +22,23 @@ const ApiUrlLookupPopup: React.FC<ApiUrlLookupPopupProps> = ({
   visible,
   onClose,
 }) => {
-  const {theme} = useStore();
+  const {theme, setApiUrl} = useStore();
   const {t} = useTranslation();
   const currentTheme = theme === 'light' ? lightTheme : darkTheme;
 
   const [baseUrl, setBaseUrl] = useState('');
+  const [currentCheckUrl, setCurrentCheckUrl] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  const [currentNumber, setCurrentNumber] = useState(0);
   const [foundUrls, setFoundUrls] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const isSearchingRef = useRef(false);
+  const currentCheckUrlRef = useRef('');
+
+  useEffect(() => {
+    if (currentCheckUrlRef.current !== currentCheckUrl) {
+      currentCheckUrlRef.current = currentCheckUrl;
+    }
+  }, [currentCheckUrl]);
 
   useEffect(() => {
     if (!visible) {
@@ -39,18 +48,48 @@ const ApiUrlLookupPopup: React.FC<ApiUrlLookupPopupProps> = ({
 
   const resetState = () => {
     setBaseUrl('');
+    setCurrentCheckUrl('');
     setIsSearching(false);
-    setCurrentNumber(0);
     setFoundUrls([]);
     setError(null);
   };
 
   const checkUrl = async (url: string): Promise<boolean> => {
     try {
-      const response = await fetch(url, {method: 'HEAD'});
-      return response.ok;
+      await axios.head(url, {
+        timeout: 5000, // 5초 타임아웃
+        validateStatus: status => status < 500, // 500 미만의 상태 코드는 유효한 것으로 간주
+      });
+      return true;
     } catch {
       return false;
+    }
+  };
+
+  const generateUrl = (url: string, number: number): string => {
+    try {
+      // URL에서 프로토콜과 도메인을 분리
+      const protocolMatch = url.match(/^(https?:\/\/)/);
+      const protocol = protocolMatch ? protocolMatch[0] : 'https://';
+      const domainAndPath = url.replace(/^(https?:\/\/)/, '');
+
+      // 도메인과 경로를 분리
+      const [domain, ...pathParts] = domainAndPath.split('/');
+      const path = pathParts.length > 0 ? '/' + pathParts.join('/') : '';
+
+      // 도메인을 부분으로 분리
+      const domainParts = domain.split('.');
+
+      // 도메인 이름의 첫 부분에 번호를 삽입
+      if (domainParts.length >= 2) {
+        domainParts[0] = `${domainParts[0]}${number}`;
+      }
+
+      // URL을 재구성
+      return `${protocol}${domainParts.join('.')}${path}`;
+    } catch (e) {
+      console.error('URL generation error:', e);
+      return url;
     }
   };
 
@@ -61,30 +100,40 @@ const ApiUrlLookupPopup: React.FC<ApiUrlLookupPopupProps> = ({
     }
 
     setIsSearching(true);
+    isSearchingRef.current = true;
     setError(null);
+    setCurrentCheckUrl('');
     setFoundUrls([]);
-    setCurrentNumber(0);
 
     let number = 0;
-    const maxAttempts = 1000; // 최대 시도 횟수 제한
+    const maxAttempts = 1000;
 
-    while (isSearching && number < maxAttempts) {
-      const url = baseUrl.replace('{number}', number.toString());
+    while (isSearchingRef.current && number < maxAttempts) {
+      const url = generateUrl(baseUrl, number);
+      currentCheckUrlRef.current = url;
+      setCurrentCheckUrl(url);
+
       const isValid = await checkUrl(url);
 
       if (isValid) {
         setFoundUrls(prev => [...prev, url]);
       }
 
-      setCurrentNumber(number);
       number++;
     }
 
     setIsSearching(false);
+    isSearchingRef.current = false;
   };
 
   const stopSearch = () => {
     setIsSearching(false);
+    isSearchingRef.current = false;
+  };
+
+  const handleUrlSelect = (url: string) => {
+    setApiUrl(url);
+    onClose();
   };
 
   if (!visible) {
@@ -143,9 +192,7 @@ const ApiUrlLookupPopup: React.FC<ApiUrlLookupPopupProps> = ({
             <ActivityIndicator color={currentTheme.colors.primary} />
             <Text
               style={[styles.progressText, {color: currentTheme.colors.text}]}>
-              {t('apiUrlLookup.checking', {
-                url: baseUrl.replace('{number}', currentNumber.toString()),
-              })}
+              {t('apiUrlLookup.checking')} {currentCheckUrl}
             </Text>
           </View>
         )}
@@ -157,11 +204,21 @@ const ApiUrlLookupPopup: React.FC<ApiUrlLookupPopupProps> = ({
               {t('apiUrlLookup.foundUrls')}
             </Text>
             {foundUrls.map((url, index) => (
-              <Text
+              <TouchableOpacity
                 key={index}
-                style={[styles.resultItem, {color: currentTheme.colors.text}]}>
-                {url}
-              </Text>
+                onPress={() => handleUrlSelect(url)}
+                style={[
+                  styles.resultItem,
+                  {backgroundColor: currentTheme.colors.card},
+                ]}>
+                <Text
+                  style={[
+                    styles.resultText,
+                    {color: currentTheme.colors.text},
+                  ]}>
+                  {url}
+                </Text>
+              </TouchableOpacity>
             ))}
           </ScrollView>
         )}
@@ -245,7 +302,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   resultItem: {
+    padding: 10,
     marginBottom: 5,
+    borderRadius: 5,
+  },
+  resultText: {
+    fontSize: 14,
   },
   closeButton: {
     padding: 10,

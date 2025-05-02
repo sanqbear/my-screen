@@ -5,13 +5,15 @@ import useStore from '@/store/useStore';
 import {lightTheme, darkTheme} from '@/types/theme';
 import {useTranslation} from 'react-i18next';
 import {Language} from '@/store/useStore';
-import ApiUrlLookupPopup from '@/components/ApiUrlLookupPopup';
+import ApiUrlLookupPopup from '@/components/settings/ApiUrlLookupPopup';
+import ApiUrlSetupPopup from '@/components/settings/ApiUrlSetupPopup';
 
 const SettingScreen = () => {
-  const {theme, language, setTheme, setLanguage} = useStore();
+  const {theme, language, apiUrl, setTheme, setLanguage} = useStore();
   const {t} = useTranslation();
   const currentTheme = theme === 'light' ? lightTheme : darkTheme;
-  const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [isLookupPopupVisible, setIsLookupPopupVisible] = useState(false);
+  const [isSetupPopupVisible, setIsSetupPopupVisible] = useState(false);
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
@@ -35,6 +37,9 @@ const SettingScreen = () => {
       </Text>
       <Text style={[styles.text, {color: currentTheme.colors.text}]}>
         {t('settings.currentLanguage', {language})}
+      </Text>
+      <Text style={[styles.text, {color: currentTheme.colors.text}]}>
+        {t('settings.currentApiUrl', {url: apiUrl})}
       </Text>
 
       <TouchableOpacity
@@ -65,13 +70,24 @@ const SettingScreen = () => {
 
       <TouchableOpacity
         style={[styles.button, {backgroundColor: currentTheme.colors.primary}]}
-        onPress={() => setIsPopupVisible(true)}>
+        onPress={() => setIsLookupPopupVisible(true)}>
         <Text style={styles.buttonText}>{t('apiUrlLookup.title')}</Text>
       </TouchableOpacity>
 
+      <TouchableOpacity
+        style={[styles.button, {backgroundColor: currentTheme.colors.primary}]}
+        onPress={() => setIsSetupPopupVisible(true)}>
+        <Text style={styles.buttonText}>{t('apiUrlSetup.title')}</Text>
+      </TouchableOpacity>
+
       <ApiUrlLookupPopup
-        visible={isPopupVisible}
-        onClose={() => setIsPopupVisible(false)}
+        visible={isLookupPopupVisible}
+        onClose={() => setIsLookupPopupVisible(false)}
+      />
+
+      <ApiUrlSetupPopup
+        visible={isSetupPopupVisible}
+        onClose={() => setIsSetupPopupVisible(false)}
       />
     </View>
   );

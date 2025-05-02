@@ -11,16 +11,25 @@
     "title": "設定",
     "currentTheme": "現在のテーマ: {{theme}}",
     "currentLanguage": "現在の言語: {{language}}",
-    "toggleTheme": "テーマを切り替える",
-    "toggleLanguage": "言語を切り替える"
+    "currentApiUrl": "現在のAPI URL: {{url}}",
+    "toggleTheme": "テーマ切り替え",
+    "toggleLanguage": "言語切り替え"
   },
   "apiUrlLookup": {
-    "title": "API URL 検索",
-    "enterBaseUrl": "基本URLを入力してください",
-    "startSearch": "検索を開始",
+    "title": "API URL検索",
+    "enterBaseUrl": "ベースURLを入力してください",
+    "startSearch": "検索開始",
     "stop": "停止",
-    "checking": "確認中: {url}",
+    "checking": "確認中:",
     "foundUrls": "見つかったURL:",
     "close": "閉じる"
+  },
+  "apiUrlSetup": {
+    "title": "API URL設定",
+    "enterUrl": "API URLを入力してください",
+    "save": "保存",
+    "close": "閉じる",
+    "errorEmpty": "URLを入力してください",
+    "errorInvalid": "無効なURLです"
   }
 }

@@ -5,7 +5,6 @@ import {
   createDrawerNavigator,
   DrawerContentComponentProps,
 } from '@react-navigation/drawer';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from '@/screens/HomeScreen';
 import SettingScreen from '@/screens/SettingScreen';
 import useStore from '@/store/useStore';
@@ -14,15 +13,6 @@ import '@/i18n';
 import {useTranslation} from 'react-i18next';
 
 const Drawer = createDrawerNavigator();
-const Stack = createNativeStackNavigator();
-
-function HomeStack() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="Home" component={HomeScreen} />
-    </Stack.Navigator>
-  );
-}
 
 function MenuDrawerContent({navigation}: DrawerContentComponentProps) {
   const {theme} = useStore();
@@ -61,6 +51,12 @@ function MenuDrawerContent({navigation}: DrawerContentComponentProps) {
   );
 }
 
+const MenuButton = ({onPress, color}: {onPress: () => void; color: string}) => (
+  <TouchableOpacity onPress={onPress} style={styles.menuButton}>
+    <Text style={[styles.menuButtonText, {color}]}>☰</Text>
+  </TouchableOpacity>
+);
+
 function App(): React.JSX.Element {
   const {theme} = useStore();
   const {t} = useTranslation();
@@ -70,7 +66,7 @@ function App(): React.JSX.Element {
     <NavigationContainer>
       <Drawer.Navigator
         drawerContent={MenuDrawerContent}
-        screenOptions={{
+        screenOptions={({navigation}) => ({
           headerStyle: {
             backgroundColor: currentTheme.colors.background,
           },
@@ -81,10 +77,16 @@ function App(): React.JSX.Element {
           drawerStyle: {
             backgroundColor: currentTheme.colors.background,
           },
-        }}>
+          headerLeft: () => (
+            <MenuButton
+              onPress={() => navigation.openDrawer()}
+              color={currentTheme.colors.text}
+            />
+          ),
+        })}>
         <Drawer.Screen
-          name="HomeStack"
-          component={HomeStack}
+          name="Home"
+          component={HomeScreen}
           options={{
             title: t('common.home'),
             headerShown: false,
@@ -124,6 +126,13 @@ const styles = StyleSheet.create({
   drawerItemText: {
     color: '#FFFFFF',
     fontSize: 16,
+  },
+  menuButton: {
+    marginLeft: 15,
+    padding: 10,
+  },
+  menuButtonText: {
+    fontSize: 24,
   },
 });
 

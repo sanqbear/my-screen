@@ -1,26 +1,35 @@
 {
   "common": {
     "menu": "菜单",
-    "home": "主页",
+    "home": "首页",
     "settings": "设置"
   },
   "home": {
-    "title": "主页"
+    "title": "首页"
   },
   "settings": {
     "title": "设置",
     "currentTheme": "当前主题: {{theme}}",
     "currentLanguage": "当前语言: {{language}}",
+    "currentApiUrl": "当前API URL: {{url}}",
     "toggleTheme": "切换主题",
     "toggleLanguage": "切换语言"
   },
   "apiUrlLookup": {
-    "title": "API URL 查找",
-    "enterBaseUrl": "输入基本URL",
+    "title": "API URL查询",
+    "enterBaseUrl": "请输入基础URL",
     "startSearch": "开始搜索",
     "stop": "停止",
-    "checking": "检查中: {url}",
+    "checking": "检查中:",
     "foundUrls": "找到的URL:",
     "close": "关闭"
+  },
+  "apiUrlSetup": {
+    "title": "API URL设置",
+    "enterUrl": "请输入API URL",
+    "save": "保存",
+    "close": "关闭",
+    "errorEmpty": "请输入URL",
+    "errorInvalid": "无效的URL"
   }
 }

@@ -11,16 +11,25 @@
     "title": "설정",
     "currentTheme": "현재 테마: {{theme}}",
     "currentLanguage": "현재 언어: {{language}}",
+    "currentApiUrl": "현재 API URL: {{url}}",
     "toggleTheme": "테마 변경",
     "toggleLanguage": "언어 변경"
   },
   "apiUrlLookup": {
-    "title": "API URL 조회",
+    "title": "API URL 검색",
     "enterBaseUrl": "기본 URL을 입력하세요",
     "startSearch": "검색 시작",
     "stop": "중지",
-    "checking": "확인 중: {url}",
+    "checking": "확인 중:",
     "foundUrls": "발견된 URL:",
     "close": "닫기"
+  },
+  "apiUrlSetup": {
+    "title": "API URL 직접 설정",
+    "enterUrl": "API URL을 입력하세요",
+    "save": "저장",
+    "close": "닫기",
+    "errorEmpty": "URL을 입력해주세요",
+    "errorInvalid": "유효하지 않은 URL입니다"
   }
 }
