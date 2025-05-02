@@ -12,15 +12,12 @@ import {lightTheme, darkTheme} from '@/types/theme';
 import {useTranslation} from 'react-i18next';
 import axios from 'axios';
 
-interface ApiUrlSetupPopupProps {
+interface UrlSetupPopupProps {
   visible: boolean;
   onClose: () => void;
 }
 
-const ApiUrlSetupPopup: React.FC<ApiUrlSetupPopupProps> = ({
-  visible,
-  onClose,
-}) => {
+const UrlSetupPopup: React.FC<UrlSetupPopupProps> = ({visible, onClose}) => {
   const {theme, apiUrl, setApiUrl} = useStore();
   const {t} = useTranslation();
   const currentTheme = theme === 'light' ? lightTheme : darkTheme;
@@ -50,7 +47,7 @@ const ApiUrlSetupPopup: React.FC<ApiUrlSetupPopupProps> = ({
 
   const handleSave = async () => {
     if (!inputUrl) {
-      setError(t('apiUrlSetup.errorEmpty'));
+      setError(t('urlSetup.errorEmpty'));
       return;
     }
 
@@ -63,10 +60,10 @@ const ApiUrlSetupPopup: React.FC<ApiUrlSetupPopupProps> = ({
         setApiUrl(inputUrl);
         onClose();
       } else {
-        setError(t('apiUrlSetup.errorInvalid'));
+        setError(t('urlSetup.errorInvalid'));
       }
     } catch {
-      setError(t('apiUrlSetup.errorInvalid'));
+      setError(t('urlSetup.errorInvalid'));
     } finally {
       setIsValidating(false);
     }
@@ -84,7 +81,7 @@ const ApiUrlSetupPopup: React.FC<ApiUrlSetupPopupProps> = ({
           {backgroundColor: currentTheme.colors.background},
         ]}>
         <Text style={[styles.title, {color: currentTheme.colors.text}]}>
-          {t('apiUrlSetup.title')}
+          {t('urlSetup.title')}
         </Text>
 
         <TextInput
@@ -95,7 +92,7 @@ const ApiUrlSetupPopup: React.FC<ApiUrlSetupPopupProps> = ({
               borderColor: currentTheme.colors.border,
             },
           ]}
-          placeholder={t('apiUrlSetup.enterUrl')}
+          placeholder={t('urlSetup.enterUrl')}
           placeholderTextColor={currentTheme.colors.secondary}
           value={inputUrl}
           onChangeText={text => {
@@ -119,7 +116,7 @@ const ApiUrlSetupPopup: React.FC<ApiUrlSetupPopupProps> = ({
                 {backgroundColor: currentTheme.colors.primary},
               ]}
               onPress={handleSave}>
-              <Text style={styles.buttonText}>{t('apiUrlSetup.save')}</Text>
+              <Text style={styles.buttonText}>{t('urlSetup.save')}</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -131,7 +128,7 @@ const ApiUrlSetupPopup: React.FC<ApiUrlSetupPopupProps> = ({
           ]}
           onPress={onClose}
           disabled={isValidating}>
-          <Text style={styles.buttonText}>{t('apiUrlSetup.close')}</Text>
+          <Text style={styles.buttonText}>{t('urlSetup.close')}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -193,4 +190,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ApiUrlSetupPopup;
+export default UrlSetupPopup;

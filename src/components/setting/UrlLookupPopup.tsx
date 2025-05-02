@@ -13,12 +13,12 @@ import {lightTheme, darkTheme} from '@/types/theme';
 import {useTranslation} from 'react-i18next';
 import axios from 'axios';
 
-interface ApiUrlLookupPopupProps {
+interface UrlLookupPopupProps {
   visible: boolean;
   onClose: () => void;
 }
 
-const ApiUrlLookupPopup: React.FC<ApiUrlLookupPopupProps> = ({
+const UrlLookupPopup: React.FC<UrlLookupPopupProps> = ({
   visible,
   onClose,
 }) => {
@@ -148,7 +148,7 @@ const ApiUrlLookupPopup: React.FC<ApiUrlLookupPopupProps> = ({
           {backgroundColor: currentTheme.colors.background},
         ]}>
         <Text style={[styles.title, {color: currentTheme.colors.text}]}>
-          {t('apiUrlLookup.title')}
+          {t('urlLookup.title')}
         </Text>
 
         <TextInput
@@ -159,7 +159,7 @@ const ApiUrlLookupPopup: React.FC<ApiUrlLookupPopupProps> = ({
               borderColor: currentTheme.colors.border,
             },
           ]}
-          placeholder={t('apiUrlLookup.enterBaseUrl')}
+          placeholder={t('urlLookup.enterBaseUrl')}
           placeholderTextColor={currentTheme.colors.secondary}
           value={baseUrl}
           onChangeText={setBaseUrl}
@@ -171,7 +171,7 @@ const ApiUrlLookupPopup: React.FC<ApiUrlLookupPopupProps> = ({
         <View style={styles.buttonContainer}>
           {isSearching ? (
             <TouchableOpacity style={[styles.stopButton]} onPress={stopSearch}>
-              <Text style={styles.buttonText}>{t('apiUrlLookup.stop')}</Text>
+              <Text style={styles.buttonText}>{t('urlLookup.stop')}</Text>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
@@ -181,7 +181,7 @@ const ApiUrlLookupPopup: React.FC<ApiUrlLookupPopupProps> = ({
               ]}
               onPress={startSearch}>
               <Text style={styles.buttonText}>
-                {t('apiUrlLookup.startSearch')}
+                {t('urlLookup.startSearch')}
               </Text>
             </TouchableOpacity>
           )}
@@ -192,7 +192,7 @@ const ApiUrlLookupPopup: React.FC<ApiUrlLookupPopupProps> = ({
             <ActivityIndicator color={currentTheme.colors.primary} />
             <Text
               style={[styles.progressText, {color: currentTheme.colors.text}]}>
-              {t('apiUrlLookup.checking')} {currentCheckUrl}
+              {t('urlLookup.checking')} {currentCheckUrl}
             </Text>
           </View>
         )}
@@ -201,7 +201,7 @@ const ApiUrlLookupPopup: React.FC<ApiUrlLookupPopupProps> = ({
           <ScrollView style={styles.resultsContainer}>
             <Text
               style={[styles.resultsTitle, {color: currentTheme.colors.text}]}>
-              {t('apiUrlLookup.foundUrls')}
+              {t('urlLookup.foundUrls')}
             </Text>
             {foundUrls.map((url, index) => (
               <TouchableOpacity
@@ -229,7 +229,7 @@ const ApiUrlLookupPopup: React.FC<ApiUrlLookupPopupProps> = ({
             {backgroundColor: currentTheme.colors.primary},
           ]}
           onPress={onClose}>
-          <Text style={styles.buttonText}>{t('apiUrlLookup.close')}</Text>
+          <Text style={styles.buttonText}>{t('urlLookup.close')}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -323,4 +323,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ApiUrlLookupPopup;
+export default UrlLookupPopup;
