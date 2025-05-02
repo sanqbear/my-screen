@@ -1,9 +1,10 @@
 import {create} from 'zustand';
 import {createJSONStorage, persist} from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import i18n from '../i18n';
 
 export type Theme = 'light' | 'dark';
-export type Language = 'ko' | 'en';
+export type Language = 'ko' | 'en' | 'ja' | 'zh';
 
 interface AppState {
   theme: Theme;
@@ -22,7 +23,10 @@ const useStore = create<AppState>()(
       apiUrl: 'https://api.example.com', // 기본 API URL을 설정하세요
 
       setTheme: theme => set({theme}),
-      setLanguage: language => set({language}),
+      setLanguage: language => {
+        i18n.changeLanguage(language);
+        set({language});
+      },
       setApiUrl: apiUrl => set({apiUrl}),
     }),
     {

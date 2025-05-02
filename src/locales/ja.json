@@ -1,0 +1,17 @@
+{
+  "common": {
+    "menu": "メニュー",
+    "home": "ホーム",
+    "settings": "設定"
+  },
+  "home": {
+    "title": "ホーム画面"
+  },
+  "settings": {
+    "title": "設定",
+    "currentTheme": "現在のテーマ: {{theme}}",
+    "currentLanguage": "現在の言語: {{language}}",
+    "toggleTheme": "テーマを切り替える",
+    "toggleLanguage": "言語を切り替える"
+  }
+}

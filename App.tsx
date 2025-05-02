@@ -10,6 +10,8 @@ import SettingScreen from './src/screens/SettingScreen';
 import useStore from './src/store/useStore';
 import {lightTheme, darkTheme} from './src/types/theme';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import './src/i18n';
+import {useTranslation} from 'react-i18next';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -23,7 +25,8 @@ function HomeStack() {
 }
 
 function MenuDrawerContent({navigation}: DrawerContentComponentProps) {
-  const {theme, language} = useStore();
+  const {theme} = useStore();
+  const {t} = useTranslation();
   const currentTheme = theme === 'light' ? lightTheme : darkTheme;
 
   return (
@@ -35,7 +38,7 @@ function MenuDrawerContent({navigation}: DrawerContentComponentProps) {
       <View style={styles.drawerHeader}>
         <Text
           style={[styles.drawerHeaderText, {color: currentTheme.colors.text}]}>
-          {language === 'ko' ? '메뉴' : 'Menu'}
+          {t('common.menu')}
         </Text>
       </View>
       <TouchableOpacity
@@ -44,9 +47,7 @@ function MenuDrawerContent({navigation}: DrawerContentComponentProps) {
           {backgroundColor: currentTheme.colors.primary},
         ]}
         onPress={() => navigation.navigate('Home')}>
-        <Text style={styles.drawerItemText}>
-          {language === 'ko' ? '홈' : 'Home'}
-        </Text>
+        <Text style={styles.drawerItemText}>{t('common.home')}</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={[
@@ -54,9 +55,7 @@ function MenuDrawerContent({navigation}: DrawerContentComponentProps) {
           {backgroundColor: currentTheme.colors.primary},
         ]}
         onPress={() => navigation.navigate('Settings')}>
-        <Text style={styles.drawerItemText}>
-          {language === 'ko' ? '설정' : 'Settings'}
-        </Text>
+        <Text style={styles.drawerItemText}>{t('common.settings')}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -64,6 +63,7 @@ function MenuDrawerContent({navigation}: DrawerContentComponentProps) {
 
 function App(): React.JSX.Element {
   const {theme} = useStore();
+  const {t} = useTranslation();
   const currentTheme = theme === 'light' ? lightTheme : darkTheme;
 
   return (
@@ -86,7 +86,7 @@ function App(): React.JSX.Element {
           name="HomeStack"
           component={HomeStack}
           options={{
-            title: 'Home',
+            title: t('common.home'),
             headerShown: false,
           }}
         />
@@ -94,7 +94,7 @@ function App(): React.JSX.Element {
           name="Settings"
           component={SettingScreen}
           options={{
-            title: 'Settings',
+            title: t('common.settings'),
           }}
         />
       </Drawer.Navigator>

@@ -2,9 +2,11 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import useStore from '../store/useStore';
 import {lightTheme, darkTheme} from '../types/theme';
+import {useTranslation} from 'react-i18next';
 
 const HomeScreen = () => {
-  const {theme, language} = useStore();
+  const {theme} = useStore();
+  const {t} = useTranslation();
   const currentTheme = theme === 'light' ? lightTheme : darkTheme;
 
   return (
@@ -14,7 +16,7 @@ const HomeScreen = () => {
         {backgroundColor: currentTheme.colors.background},
       ]}>
       <Text style={[styles.text, {color: currentTheme.colors.text}]}>
-        {language === 'ko' ? '홈 화면' : 'Home Screen'}
+        {t('home.title')}
       </Text>
     </View>
   );

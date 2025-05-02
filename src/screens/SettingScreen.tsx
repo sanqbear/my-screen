@@ -1,21 +1,26 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {Picker} from '@react-native-picker/picker';
 import useStore from '../store/useStore';
 import {lightTheme, darkTheme} from '../types/theme';
+import {useTranslation} from 'react-i18next';
+import {Language} from '../store/useStore';
 
 const SettingScreen = () => {
   const {theme, language, setTheme, setLanguage} = useStore();
-
-  // 현재 테마에 따라 테마 객체 선택
+  const {t} = useTranslation();
   const currentTheme = theme === 'light' ? lightTheme : darkTheme;
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
-  const toggleLanguage = () => {
-    setLanguage(language === 'ko' ? 'en' : 'ko');
-  };
+  const languages = [
+    {code: 'ko' as Language, name: '한국어'},
+    {code: 'en' as Language, name: 'English'},
+    {code: 'ja' as Language, name: '日本語'},
+    {code: 'zh' as Language, name: '中文'},
+  ];
 
   return (
     <View
@@ -24,29 +29,37 @@ const SettingScreen = () => {
         {backgroundColor: currentTheme.colors.background},
       ]}>
       <Text style={[styles.text, {color: currentTheme.colors.text}]}>
-        {language === 'ko' ? '현재 테마: ' : 'Current Theme: '}
-        {theme}
+        {t('settings.currentTheme', {theme})}
       </Text>
       <Text style={[styles.text, {color: currentTheme.colors.text}]}>
-        {language === 'ko' ? '현재 언어: ' : 'Current Language: '}
-        {language}
+        {t('settings.currentLanguage', {language})}
       </Text>
 
       <TouchableOpacity
         style={[styles.button, {backgroundColor: currentTheme.colors.primary}]}
         onPress={toggleTheme}>
-        <Text style={styles.buttonText}>
-          {language === 'ko' ? '테마 변경' : 'Toggle Theme'}
-        </Text>
+        <Text style={styles.buttonText}>{t('settings.toggleTheme')}</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={[styles.button, {backgroundColor: currentTheme.colors.primary}]}
-        onPress={toggleLanguage}>
-        <Text style={styles.buttonText}>
-          {language === 'ko' ? '언어 변경' : 'Toggle Language'}
-        </Text>
-      </TouchableOpacity>
+      <View
+        style={[
+          styles.pickerContainer,
+          {backgroundColor: currentTheme.colors.background},
+        ]}>
+        <Picker
+          selectedValue={language}
+          onValueChange={(value: Language) => setLanguage(value)}
+          style={[styles.picker, {color: currentTheme.colors.text}]}>
+          {languages.map(lang => (
+            <Picker.Item
+              key={lang.code}
+              label={lang.name}
+              value={lang.code}
+              color={currentTheme.colors.text}
+            />
+          ))}
+        </Picker>
+      </View>
     </View>
   );
 };
@@ -69,6 +82,16 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#FFFFFF',
     fontSize: 16,
+  },
+  pickerContainer: {
+    width: '80%',
+    marginTop: 20,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+  },
+  picker: {
+    width: '100%',
   },
 });
 

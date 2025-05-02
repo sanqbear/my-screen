@@ -1,0 +1,17 @@
+{
+  "common": {
+    "menu": "菜单",
+    "home": "主页",
+    "settings": "设置"
+  },
+  "home": {
+    "title": "主页"
+  },
+  "settings": {
+    "title": "设置",
+    "currentTheme": "当前主题: {{theme}}",
+    "currentLanguage": "当前语言: {{language}}",
+    "toggleTheme": "切换主题",
+    "toggleLanguage": "切换语言"
+  }
+}

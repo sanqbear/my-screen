@@ -1,0 +1,17 @@
+{
+  "common": {
+    "menu": "Menu",
+    "home": "Home",
+    "settings": "Settings"
+  },
+  "home": {
+    "title": "Home Screen"
+  },
+  "settings": {
+    "title": "Settings",
+    "currentTheme": "Current Theme: {{theme}}",
+    "currentLanguage": "Current Language: {{language}}",
+    "toggleTheme": "Toggle Theme",
+    "toggleLanguage": "Toggle Language"
+  }
+} 
