@@ -1,4 +1,4 @@
-package com.myscreen
+package com.sanqbear.myscreen
 
 import android.os.Bundle
 import com.facebook.react.ReactActivity
