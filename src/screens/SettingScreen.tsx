@@ -1,13 +1,13 @@
 import React, {useMemo, useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {Picker} from '@react-native-picker/picker';
 import useStore from '@/store/useStore';
 import {lightTheme, darkTheme} from '@/types/theme';
 import {useTranslation} from 'react-i18next';
 import {Language} from '@/store/useStore';
 import UrlLookupPopup from '@/components/setting/UrlLookupPopup';
 import UrlSetupPopup from '@/components/setting/UrlSetupPopup';
+import LanguagePopup from '@/components/setting/LanguagePopup';
 
 const SettingButton = React.memo(
   ({
@@ -32,23 +32,29 @@ const SettingItem = React.memo(
     title,
     content,
     color,
+    onPress,
   }: {
     title: string;
     content: string;
     color: string;
+    onPress?: () => void;
   }) => (
-    <View style={styles.settingItem}>
+    <TouchableOpacity
+      style={styles.settingItem}
+      onPress={onPress}
+      disabled={!onPress}>
       <Text style={[styles.settingTitle, {color}]}>{title}</Text>
       <Text style={[styles.settingContent, {color}]}>{content}</Text>
-    </View>
+    </TouchableOpacity>
   ),
 );
 
 const SettingScreen = () => {
-  const {theme, language, apiUrl, setTheme, setLanguage} = useStore();
+  const {theme, language, apiUrl, setTheme} = useStore();
   const {t} = useTranslation();
   const [isLookupPopupVisible, setIsLookupPopupVisible] = useState(false);
   const [isSetupPopupVisible, setIsSetupPopupVisible] = useState(false);
+  const [isLanguagePopupVisible, setIsLanguagePopupVisible] = useState(false);
   const currentTheme = useMemo(
     () => (theme === 'light' ? lightTheme : darkTheme),
     [theme],
@@ -76,11 +82,13 @@ const SettingScreen = () => {
           title={t('settings.theme')}
           content={t(`settings.${theme}`)}
           color={currentTheme.colors.text}
+          onPress={toggleTheme}
         />
         <SettingItem
           title={t('settings.language')}
           content={languages.find(lang => lang.code === language)?.name || ''}
           color={currentTheme.colors.text}
+          onPress={() => setIsLanguagePopupVisible(true)}
         />
         <SettingItem
           title={t('settings.apiUrl')}
@@ -90,32 +98,6 @@ const SettingScreen = () => {
       </View>
 
       <View style={styles.controlsContainer}>
-        <SettingButton
-          onPress={toggleTheme}
-          title={t('settings.toggleTheme')}
-          color={currentTheme.colors.primary}
-        />
-
-        <View
-          style={[
-            styles.pickerContainer,
-            {backgroundColor: currentTheme.colors.background},
-          ]}>
-          <Picker
-            selectedValue={language}
-            onValueChange={(value: Language) => setLanguage(value)}
-            style={[styles.picker, {color: currentTheme.colors.text}]}>
-            {languages.map(lang => (
-              <Picker.Item
-                key={lang.code}
-                label={lang.name}
-                value={lang.code}
-                color={currentTheme.colors.text}
-              />
-            ))}
-          </Picker>
-        </View>
-
         <SettingButton
           onPress={() => setIsLookupPopupVisible(true)}
           title={t('urlLookup.title')}
@@ -137,6 +119,11 @@ const SettingScreen = () => {
       <UrlSetupPopup
         visible={isSetupPopupVisible}
         onClose={() => setIsSetupPopupVisible(false)}
+      />
+
+      <LanguagePopup
+        visible={isLanguagePopupVisible}
+        onClose={() => setIsLanguagePopupVisible(false)}
       />
     </SafeAreaView>
   );
@@ -178,15 +165,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#FFFFFF',
     fontSize: 16,
-  },
-  pickerContainer: {
-    width: '100%',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-  },
-  picker: {
-    width: '100%',
   },
 });
 
