@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, TouchableOpacity, Text} from 'react-native';
+import {StyleSheet, TouchableOpacity, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import useStore from '@/store/useStore';
 import {lightTheme, darkTheme} from '@/types/theme';
@@ -31,10 +31,12 @@ const HomeScreen = () => {
         styles.container,
         {backgroundColor: currentTheme.colors.background},
       ]}>
-      <MenuButton
-        onPress={() => navigation.openDrawer()}
-        color={currentTheme.colors.text}
-      />
+      <View style={styles.headerContainer}>
+        <MenuButton
+          onPress={() => navigation.openDrawer()}
+          color={currentTheme.colors.text}
+        />
+      </View>
       <HomeLayout />
     </SafeAreaView>
   );
@@ -44,12 +46,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  headerContainer: {
+    height: 50,
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+  },
   menuButton: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
-    padding: 10,
-    zIndex: 1,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   menuButtonText: {
     fontSize: 24,
