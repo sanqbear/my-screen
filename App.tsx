@@ -115,7 +115,7 @@ function App(): React.JSX.Element {
   return (
     <NavigationContainer>
       <Drawer.Navigator
-        drawerContent={MenuDrawerContent}
+        drawerContent={props => <MenuDrawerContent {...props} />}
         screenOptions={screenOptions}>
         <Drawer.Screen
           name="Home"
