@@ -18,10 +18,7 @@ interface UrlLookupPopupProps {
   onClose: () => void;
 }
 
-const UrlLookupPopup: React.FC<UrlLookupPopupProps> = ({
-  visible,
-  onClose,
-}) => {
+const UrlLookupPopup: React.FC<UrlLookupPopupProps> = ({visible, onClose}) => {
   const {theme, setApiUrl} = useStore();
   const {t} = useTranslation();
   const currentTheme = theme === 'light' ? lightTheme : darkTheme;
@@ -56,11 +53,22 @@ const UrlLookupPopup: React.FC<UrlLookupPopupProps> = ({
 
   const checkUrl = async (url: string): Promise<boolean> => {
     try {
-      await axios.head(url, {
-        timeout: 5000, // 5초 타임아웃
-        validateStatus: status => status < 500, // 500 미만의 상태 코드는 유효한 것으로 간주
+      const response = await axios.head(url, {
+        timeout: 3000, // 3초 타임아웃
+        validateStatus: status => status === 200, // 200 상태 코드는 유효한 것으로 간주
+        maxRedirects: 0, // 리다이렉트 비활성화
       });
-      return true;
+
+      // Cloudflare 관련 헤더 확인
+      const serverHeader = response.headers.server;
+      const cfRayHeader = response.headers['cf-ray'];
+
+      // 서버가 Cloudflare이고 Cf-Ray 헤더가 있는 경우에만 true 반환
+      return (
+        response.status === 200 &&
+        serverHeader?.toLowerCase() === 'cloudflare' &&
+        cfRayHeader !== undefined
+      );
     } catch {
       return false;
     }
