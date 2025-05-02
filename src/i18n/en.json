@@ -15,7 +15,7 @@
     "toggleTheme": "Toggle Theme",
     "toggleLanguage": "Toggle Language"
   },
-  "apiUrlLookup": {
+  "urlLookup": {
     "title": "API URL Lookup",
     "enterBaseUrl": "Enter base URL",
     "startSearch": "Start Search",
@@ -24,7 +24,7 @@
     "foundUrls": "Found URLs:",
     "close": "Close"
   },
-  "apiUrlSetup": {
+  "urlSetup": {
     "title": "API URL Setup",
     "enterUrl": "Enter API URL",
     "save": "Save",

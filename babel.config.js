@@ -7,6 +7,7 @@ module.exports = {
         root: ['./src'],
         alias: {
           '@': './src',
+          '@locales': './src/i18n',
         },
       },
     ],
