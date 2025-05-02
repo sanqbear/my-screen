@@ -20,6 +20,9 @@ import React from 'react';
 import HomeScreen from './src/screens/HomeScreen';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
+import useStore from './src/store/useStore';
+import {lightTheme, darkTheme} from './src/types/theme';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 
 const Stack = createNativeStackNavigator();
 
@@ -32,9 +35,58 @@ function RootStack() {
 }
 
 function App(): React.JSX.Element {
+  const {theme, language, setTheme, setLanguage} = useStore();
+
+  // 현재 테마에 따라 테마 객체 선택
+  const currentTheme = theme === 'light' ? lightTheme : darkTheme;
+
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  };
+
+  const toggleLanguage = () => {
+    setLanguage(language === 'ko' ? 'en' : 'ko');
+  };
+
   return (
     <NavigationContainer>
       <RootStack />
+      <View
+        style={[
+          styles.container,
+          {backgroundColor: currentTheme.colors.background},
+        ]}>
+        <Text style={[styles.text, {color: currentTheme.colors.text}]}>
+          {language === 'ko' ? '현재 테마: ' : 'Current Theme: '}
+          {theme}
+        </Text>
+        <Text style={[styles.text, {color: currentTheme.colors.text}]}>
+          {language === 'ko' ? '현재 언어: ' : 'Current Language: '}
+          {language}
+        </Text>
+
+        <TouchableOpacity
+          style={[
+            styles.button,
+            {backgroundColor: currentTheme.colors.primary},
+          ]}
+          onPress={toggleTheme}>
+          <Text style={styles.buttonText}>
+            {language === 'ko' ? '테마 변경' : 'Toggle Theme'}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.button,
+            {backgroundColor: currentTheme.colors.primary},
+          ]}
+          onPress={toggleLanguage}>
+          <Text style={styles.buttonText}>
+            {language === 'ko' ? '언어 변경' : 'Toggle Language'}
+          </Text>
+        </TouchableOpacity>
+      </View>
     </NavigationContainer>
   );
 }
@@ -124,23 +176,25 @@ function App(): React.JSX.Element {
 //   );
 // }
 
-// const styles = StyleSheet.create({
-//   sectionContainer: {
-//     marginTop: 32,
-//     paddingHorizontal: 24,
-//   },
-//   sectionTitle: {
-//     fontSize: 24,
-//     fontWeight: '600',
-//   },
-//   sectionDescription: {
-//     marginTop: 8,
-//     fontSize: 18,
-//     fontWeight: '400',
-//   },
-//   highlight: {
-//     fontWeight: '700',
-//   },
-// });
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  button: {
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+  },
+});
 
 export default App;
