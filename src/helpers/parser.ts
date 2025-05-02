@@ -15,9 +15,9 @@ export interface HomeArtworks {
 const normalizeTitle = (title: string) => {
   return title
     .trim()
-    .replace(/^[+\d]+/, '')
+    .replace(/^[+\d]+\s+/, '')
     .trim()
-    .replace(/^\d+/, '')
+    .replace(/^\d+\s+/, '')
     .trim();
 };
 
