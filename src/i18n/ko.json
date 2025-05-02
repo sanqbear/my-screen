@@ -2,10 +2,18 @@
   "common": {
     "menu": "메뉴",
     "home": "홈",
-    "settings": "설정"
+    "settings": "설정",
+    "confirm": "확인",
+    "cancel": "취소",
+    "error": "오류"
   },
   "home": {
-    "title": "홈 화면"
+    "title": "홈 화면",
+    "apiError": {
+      "title": "오류",
+      "message": "데이터를 가져오는데 실패했습니다. 설정 화면에서 API URL을 확인해주세요.",
+      "goToSettings": "설정으로 이동"
+    }
   },
   "settings": {
     "title": "설정",

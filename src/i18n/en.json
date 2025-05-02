@@ -2,10 +2,18 @@
   "common": {
     "menu": "Menu",
     "home": "Home",
-    "settings": "Settings"
+    "settings": "Settings",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "error": "Error"
   },
   "home": {
-    "title": "Home Screen"
+    "title": "Home Screen",
+    "apiError": {
+      "title": "Error",
+      "message": "Failed to fetch data. Please check the API URL in the settings screen.",
+      "goToSettings": "Go to Settings"
+    }
   },
   "settings": {
     "title": "Settings",

@@ -2,10 +2,18 @@
   "common": {
     "menu": "菜单",
     "home": "首页",
-    "settings": "设置"
+    "settings": "设置",
+    "confirm": "确认",
+    "cancel": "取消",
+    "error": "错误"
   },
   "home": {
-    "title": "首页"
+    "title": "首页",
+    "apiError": {
+      "title": "错误",
+      "message": "获取数据失败。请在设置界面检查API URL。",
+      "goToSettings": "前往设置"
+    }
   },
   "settings": {
     "title": "设置",
