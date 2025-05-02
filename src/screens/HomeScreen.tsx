@@ -1,5 +1,6 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import useStore from '@/store/useStore';
 import {lightTheme, darkTheme} from '@/types/theme';
 import {useTranslation} from 'react-i18next';
@@ -11,6 +12,14 @@ type RootParamList = {
   Settings: undefined;
 };
 
+const MenuButton = React.memo(
+  ({onPress, color}: {onPress: () => void; color: string}) => (
+    <TouchableOpacity style={styles.menuButton} onPress={onPress}>
+      <Text style={[styles.menuButtonText, {color}]}>☰</Text>
+    </TouchableOpacity>
+  ),
+);
+
 const HomeScreen = () => {
   const {theme} = useStore();
   const {t} = useTranslation();
@@ -18,24 +27,20 @@ const HomeScreen = () => {
   const currentTheme = theme === 'light' ? lightTheme : darkTheme;
 
   return (
-    <View
+    <SafeAreaView
       style={[
         styles.container,
         {backgroundColor: currentTheme.colors.background},
       ]}>
-      <TouchableOpacity
-        style={styles.menuButton}
-        onPress={() => navigation.openDrawer()}>
-        <Text
-          style={[styles.menuButtonText, {color: currentTheme.colors.text}]}>
-          ☰
-        </Text>
-      </TouchableOpacity>
+      <MenuButton
+        onPress={() => navigation.openDrawer()}
+        color={currentTheme.colors.text}
+      />
 
       <Text style={[styles.text, {color: currentTheme.colors.text}]}>
         {t('home.title')}
       </Text>
-    </View>
+    </SafeAreaView>
   );
 };
 

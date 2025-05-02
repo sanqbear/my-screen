@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {Picker} from '@react-native-picker/picker';
 import useStore from '@/store/useStore';
 import {lightTheme, darkTheme} from '@/types/theme';
@@ -7,6 +8,18 @@ import {useTranslation} from 'react-i18next';
 import {Language} from '@/store/useStore';
 import ApiUrlLookupPopup from '@/components/settings/ApiUrlLookupPopup';
 import ApiUrlSetupPopup from '@/components/settings/ApiUrlSetupPopup';
+
+const SettingButton = React.memo(({onPress, title, color}: {onPress: () => void; title: string; color: string}) => (
+  <TouchableOpacity
+    style={[styles.button, {backgroundColor: color}]}
+    onPress={onPress}>
+    <Text style={styles.buttonText}>{title}</Text>
+  </TouchableOpacity>
+));
+
+const SettingText = React.memo(({text, color}: {text: string; color: string}) => (
+  <Text style={[styles.text, {color}]}>{text}</Text>
+));
 
 const SettingScreen = () => {
   const {theme, language, apiUrl, setTheme, setLanguage} = useStore();
@@ -27,26 +40,29 @@ const SettingScreen = () => {
   ];
 
   return (
-    <View
+    <SafeAreaView
       style={[
         styles.container,
         {backgroundColor: currentTheme.colors.background},
       ]}>
-      <Text style={[styles.text, {color: currentTheme.colors.text}]}>
-        {t('settings.currentTheme', {theme})}
-      </Text>
-      <Text style={[styles.text, {color: currentTheme.colors.text}]}>
-        {t('settings.currentLanguage', {language})}
-      </Text>
-      <Text style={[styles.text, {color: currentTheme.colors.text}]}>
-        {t('settings.currentApiUrl', {url: apiUrl})}
-      </Text>
+      <SettingText
+        text={t('settings.currentTheme', {theme})}
+        color={currentTheme.colors.text}
+      />
+      <SettingText
+        text={t('settings.currentLanguage', {language})}
+        color={currentTheme.colors.text}
+      />
+      <SettingText
+        text={t('settings.currentApiUrl', {url: apiUrl})}
+        color={currentTheme.colors.text}
+      />
 
-      <TouchableOpacity
-        style={[styles.button, {backgroundColor: currentTheme.colors.primary}]}
-        onPress={toggleTheme}>
-        <Text style={styles.buttonText}>{t('settings.toggleTheme')}</Text>
-      </TouchableOpacity>
+      <SettingButton
+        onPress={toggleTheme}
+        title={t('settings.toggleTheme')}
+        color={currentTheme.colors.primary}
+      />
 
       <View
         style={[
@@ -68,17 +84,17 @@ const SettingScreen = () => {
         </Picker>
       </View>
 
-      <TouchableOpacity
-        style={[styles.button, {backgroundColor: currentTheme.colors.primary}]}
-        onPress={() => setIsLookupPopupVisible(true)}>
-        <Text style={styles.buttonText}>{t('apiUrlLookup.title')}</Text>
-      </TouchableOpacity>
+      <SettingButton
+        onPress={() => setIsLookupPopupVisible(true)}
+        title={t('apiUrlLookup.title')}
+        color={currentTheme.colors.primary}
+      />
 
-      <TouchableOpacity
-        style={[styles.button, {backgroundColor: currentTheme.colors.primary}]}
-        onPress={() => setIsSetupPopupVisible(true)}>
-        <Text style={styles.buttonText}>{t('apiUrlSetup.title')}</Text>
-      </TouchableOpacity>
+      <SettingButton
+        onPress={() => setIsSetupPopupVisible(true)}
+        title={t('apiUrlSetup.title')}
+        color={currentTheme.colors.primary}
+      />
 
       <ApiUrlLookupPopup
         visible={isLookupPopupVisible}
@@ -89,7 +105,7 @@ const SettingScreen = () => {
         visible={isSetupPopupVisible}
         onClose={() => setIsSetupPopupVisible(false)}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
