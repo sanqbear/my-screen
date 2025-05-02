@@ -6,8 +6,8 @@ import useStore from '@/store/useStore';
 import {lightTheme, darkTheme} from '@/types/theme';
 import {useTranslation} from 'react-i18next';
 import {Language} from '@/store/useStore';
-import ApiUrlLookupPopup from '@/components/settings/ApiUrlLookupPopup';
-import ApiUrlSetupPopup from '@/components/settings/ApiUrlSetupPopup';
+import UrlLookupPopup from '@/components/setting/UrlLookupPopup';
+import UrlSetupPopup from '@/components/setting/UrlSetupPopup';
 
 const SettingButton = React.memo(
   ({
@@ -101,22 +101,22 @@ const SettingScreen = () => {
 
       <SettingButton
         onPress={() => setIsLookupPopupVisible(true)}
-        title={t('apiUrlLookup.title')}
+        title={t('urlLookup.title')}
         color={currentTheme.colors.primary}
       />
 
       <SettingButton
         onPress={() => setIsSetupPopupVisible(true)}
-        title={t('apiUrlSetup.title')}
+        title={t('urlSetup.title')}
         color={currentTheme.colors.primary}
       />
 
-      <ApiUrlLookupPopup
+      <UrlLookupPopup
         visible={isLookupPopupVisible}
         onClose={() => setIsLookupPopupVisible(false)}
       />
 
-      <ApiUrlSetupPopup
+      <UrlSetupPopup
         visible={isSetupPopupVisible}
         onClose={() => setIsSetupPopupVisible(false)}
       />
