@@ -4,6 +4,10 @@ export interface Artwork {
   id: number;
   title: string;
   thumbnailUrl: string | null | undefined;
+  oid: number | null;
+  author: string | null;
+  date: string | null;
+  tags: string[];
 }
 
 export interface HomeArtworks {
@@ -12,13 +16,36 @@ export interface HomeArtworks {
   weekly: Artwork[];
 }
 
-const normalizeTitle = (title: string) => {
-  return title
+export interface ArtworkPagedList {
+  artworks: Artwork[];
+  hasNext: boolean;
+}
+
+const normalizeText = (title: string) => {
+  let normalized = title
     .trim()
     .replace(/^[+\d]+\s+/, '')
     .trim()
     .replace(/^\d+\s+/, '')
     .trim();
+
+  // 끝부분의 공백과 숫자를 반복해서 제거
+  let prevLength;
+  do {
+    prevLength = normalized.length;
+    normalized = normalized.replace(/\s+\d+$/, '').trim();
+  } while (normalized.length < prevLength);
+
+  return normalized;
+};
+
+const normalizeTag = (text: string) => {
+  // 앞부분의 공백과 줄바꿈을 제거하고 뒤의 태그 부분만 남기기
+  const parts = text
+    .split('\n')
+    .map(part => part.trim())
+    .filter(Boolean);
+  return parts[parts.length - 1] || '';
 };
 
 export const parseHomeArtworks = (html: string, host: string): HomeArtworks => {
@@ -49,11 +76,15 @@ export const parseHomeArtworks = (html: string, host: string): HomeArtworks => {
 
       const artwork: Artwork = {
         id: parseInt(link.getAttribute('href')?.split('comic/')[1] || '0', 10),
-        title: normalizeTitle(imgItem.querySelector('.in-subject')?.text || ''),
+        title: normalizeText(imgItem.querySelector('.in-subject')?.text || ''),
         thumbnailUrl: imgItem
           .querySelector('img')
           ?.getAttribute('src')
           ?.replace(/^https?:\/\/[^/]+/, host),
+        oid: null,
+        author: null,
+        date: null,
+        tags: [],
       };
       homeArtworks.recent.push(artwork);
     });
@@ -75,11 +106,15 @@ export const parseHomeArtworks = (html: string, host: string): HomeArtworks => {
 
       const artwork: Artwork = {
         id: parseInt(link.getAttribute('href')?.split('comic/')[1] || '0', 10),
-        title: normalizeTitle(imgItem.querySelector('.in-subject')?.text || ''),
+        title: normalizeText(imgItem.querySelector('.in-subject')?.text || ''),
         thumbnailUrl: imgItem
           .querySelector('img')
           ?.getAttribute('src')
           ?.replace(/^https?:\/\/[^/]+/, host),
+        oid: null,
+        author: null,
+        date: null,
+        tags: [],
       };
       homeArtworks.recommend.push(artwork);
     });
@@ -104,11 +139,15 @@ export const parseHomeArtworks = (html: string, host: string): HomeArtworks => {
           imgItem.getAttribute('href')?.split('comic/')[1] || '0',
           10,
         ),
-        title: normalizeTitle(imgItem.text?.trim() || ''),
+        title: normalizeText(imgItem.text?.trim() || ''),
         thumbnailUrl: imgItem
           .querySelector('img')
           ?.getAttribute('src')
           ?.replace(/^https?:\/\/[^/]+/, host),
+        oid: null,
+        author: null,
+        date: null,
+        tags: [],
       };
       homeArtworks.weekly.push(artwork);
     });
@@ -116,4 +155,70 @@ export const parseHomeArtworks = (html: string, host: string): HomeArtworks => {
 
   console.log('Parsing result:', homeArtworks);
   return homeArtworks;
+};
+
+export const parseRecentArtworks = (
+  html: string,
+  host: string,
+): ArtworkPagedList => {
+  console.log('Starting HTML parsing');
+  const root = parse(html);
+  console.log('HTML parsing completed');
+
+  const postRows = root.querySelectorAll('.post-row');
+  console.log(`Found ${postRows.length} recent artworks`);
+
+  const artworks: Artwork[] = [];
+  const pgEnd = root.querySelector('.pg')?.querySelector('.pg_end');
+  const hasNext = !!pgEnd;
+
+  postRows.forEach(row => {
+    const imgItem = row.querySelector('img');
+    const imgUrl = imgItem
+      ?.getAttribute('src')
+      ?.replace(/^https?:\/\/[^/]+/, host);
+    const id = parseInt(
+      row
+        .querySelector('.pull-left')
+        ?.querySelector('a')
+        ?.getAttribute('href')
+        ?.split('comic/')[1] || '0',
+      10,
+    );
+    const title =
+      row.querySelector('.post-subject')?.querySelector('a')?.text || '';
+
+    const oid = parseInt(
+      row
+        .querySelector('.pull-right')
+        ?.querySelector('a')
+        ?.getAttribute('href')
+        ?.split('comic/')[1] || '0',
+      10,
+    );
+    const date = row
+      .querySelector('.pull-right')
+      ?.querySelectorAll('p')[1]
+      ?.querySelector('span')?.text;
+    const at = row.querySelector('.post-text')?.text;
+    const author = at ? at.substring(0, at.lastIndexOf(' ')) : '';
+    const tags = at ? normalizeTag(at || '').split(',') : [];
+
+    if (id) {
+      const artwork: Artwork = {
+        id,
+        title: normalizeText(title),
+        thumbnailUrl: imgUrl || null,
+        oid: oid || null,
+        author: author ? normalizeText(author).split('\n')[0]?.trim() : null,
+        date: date || null,
+        tags: tags || [],
+      };
+
+      artworks.push(artwork);
+    }
+  });
+
+  console.log('Parsing result:', artworks);
+  return {artworks, hasNext};
 };
