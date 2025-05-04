@@ -3,8 +3,15 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@locales/*": ["src/i18n/*"]
-    }
+      "@/*": [
+        "src/*"
+      ],
+      "@locales/*": [
+        "src/i18n/*"
+      ]
+    },
+    "types": [
+      "react-native-svg-transformer"
+    ]
   }
 }

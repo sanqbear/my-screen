@@ -14,7 +14,7 @@ const ArtworkItem: React.FC<ArtworkItemProps> = memo(
           source={{uri: artwork.thumbnailUrl || ''}}
           style={styles.thumbnail}
           resizeMode="cover"
-          defaultSource={require('@/assets/images/placeholder.png')}
+          defaultSource={require('@/assets/images/placeholder.svg')}
         />
         <View style={styles.content}>
           <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">
