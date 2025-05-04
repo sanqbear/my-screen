@@ -1,7 +1,7 @@
 import React, {useCallback, forwardRef} from 'react';
 import {FlatList, StyleSheet} from 'react-native';
 import {Artwork} from '@/helpers/parser';
-import ArtworkItem from './ArtworkItem';
+import ArtworkItem from '@/components/common/ArtworkItem';
 
 interface ArtworkListProps {
   artworks: Artwork[];

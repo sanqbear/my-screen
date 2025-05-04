@@ -79,4 +79,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ArtworkItem; 
+export default ArtworkItem;
