@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {View, Text, Image, StyleSheet} from 'react-native';
 import {Artwork} from '@/helpers/parser';
 
@@ -6,32 +6,40 @@ interface ArtworkItemProps {
   artwork: Artwork;
 }
 
-const ArtworkItem: React.FC<ArtworkItemProps> = ({artwork}) => {
-  return (
-    <View style={styles.container}>
-      <Image
-        source={{uri: artwork.thumbnailUrl || ''}}
-        style={styles.thumbnail}
-        resizeMode="cover"
-      />
-      <View style={styles.content}>
-        <Text style={styles.title} numberOfLines={2}>
-          {artwork.title}
-        </Text>
-        <View style={styles.meta}>
-          <Text style={styles.author}>{artwork.author}</Text>
-          <View style={styles.tags}>
-            {artwork.tags.map((tag, index) => (
-              <Text key={index} style={styles.tag}>
-                {tag}
-              </Text>
-            ))}
+const ArtworkItem: React.FC<ArtworkItemProps> = memo(
+  ({artwork}) => {
+    return (
+      <View style={styles.container}>
+        <Image
+          source={{uri: artwork.thumbnailUrl || ''}}
+          style={styles.thumbnail}
+          resizeMode="cover"
+          defaultSource={require('@/assets/images/placeholder.png')}
+        />
+        <View style={styles.content}>
+          <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">
+            {artwork.title}
+          </Text>
+          <View style={styles.meta}>
+            <Text style={styles.author} numberOfLines={1} ellipsizeMode="tail">
+              {artwork.author}
+            </Text>
+            <View style={styles.tags}>
+              {artwork.tags.map((tag, index) => (
+                <Text key={index} style={styles.tag} numberOfLines={1}>
+                  {tag}
+                </Text>
+              ))}
+            </View>
           </View>
         </View>
       </View>
-    </View>
-  );
-};
+    );
+  },
+  (prevProps, nextProps) => {
+    return prevProps.artwork.id === nextProps.artwork.id;
+  },
+);
 
 const styles = StyleSheet.create({
   container: {
