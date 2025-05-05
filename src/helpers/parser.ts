@@ -1,26 +1,5 @@
 import {parse} from 'node-html-parser';
-
-export interface Artwork {
-  id: number;
-  title: string;
-  thumbnailUrl: string | null | undefined;
-  tid: number | null;
-  oid: number | null;
-  author: string | null;
-  date: string | null;
-  tags: string[];
-}
-
-export interface HomeArtworks {
-  recent: Artwork[];
-  recommend: Artwork[];
-  weekly: Artwork[];
-}
-
-export interface ArtworkPagedList {
-  artworks: Artwork[];
-  hasNext: boolean;
-}
+import {Artwork, HomeArtworks, ArtworkPagedList} from '@/types';
 
 const normalizeText = (title: string) => {
   let normalized = title
@@ -78,10 +57,11 @@ export const parseHomeArtworks = (html: string, host: string): HomeArtworks => {
       const artwork: Artwork = {
         id: parseInt(link.getAttribute('href')?.split('comic/')[1] || '0', 10),
         title: normalizeText(imgItem.querySelector('.in-subject')?.text || ''),
-        thumbnailUrl: imgItem
-          .querySelector('img')
-          ?.getAttribute('src')
-          ?.replace(/^https?:\/\/[^/]+/, host),
+        thumbnailUrl:
+          imgItem
+            .querySelector('img')
+            ?.getAttribute('src')
+            ?.replace(/^https?:\/\/[^/]+/, host) || null,
         tid: parseInt(link.getAttribute('href')?.split('comic/')[1] || '0', 10),
         oid: null,
         author: null,
@@ -109,10 +89,11 @@ export const parseHomeArtworks = (html: string, host: string): HomeArtworks => {
       const artwork: Artwork = {
         id: parseInt(link.getAttribute('href')?.split('comic/')[1] || '0', 10),
         title: normalizeText(imgItem.querySelector('.in-subject')?.text || ''),
-        thumbnailUrl: imgItem
-          .querySelector('img')
-          ?.getAttribute('src')
-          ?.replace(/^https?:\/\/[^/]+/, host),
+        thumbnailUrl:
+          imgItem
+            .querySelector('img')
+            ?.getAttribute('src')
+            ?.replace(/^https?:\/\/[^/]+/, host) || null,
         tid: parseInt(link.getAttribute('href')?.split('comic/')[1] || '0', 10),
         oid: null,
         author: null,
@@ -143,10 +124,11 @@ export const parseHomeArtworks = (html: string, host: string): HomeArtworks => {
           10,
         ),
         title: normalizeText(imgItem.text?.trim() || ''),
-        thumbnailUrl: imgItem
-          .querySelector('img')
-          ?.getAttribute('src')
-          ?.replace(/^https?:\/\/[^/]+/, host),
+        thumbnailUrl:
+          imgItem
+            .querySelector('img')
+            ?.getAttribute('src')
+            ?.replace(/^https?:\/\/[^/]+/, host) || null,
         tid: parseInt(
           imgItem.getAttribute('href')?.split('comic/')[1] || '0',
           10,
@@ -185,19 +167,19 @@ export const parseArtworkList = (html: string): ArtworkPagedList => {
     const author =
       row.querySelector('.list-artist')?.querySelector('a')?.text || '';
 
-      if(id && artworks.findIndex(artwork => artwork.id === id) === -1) {
-        const artwork: Artwork = {
-          id: id,
-          title: title,
-          thumbnailUrl: thumbnailUrl,
-          oid: id,
-          tid: null,
-          author: author,
-          date: null,
-          tags: [],
-        };
-        artworks.push(artwork);
-      }
+    if (id && artworks.findIndex(artwork => artwork.id === id) === -1) {
+      const artwork: Artwork = {
+        id: id,
+        title: title,
+        thumbnailUrl: thumbnailUrl,
+        oid: id,
+        tid: null,
+        author: author,
+        date: null,
+        tags: [],
+      };
+      artworks.push(artwork);
+    }
   });
 
   let hasNext = true;
@@ -279,3 +261,17 @@ export const parseRecentArtworks = (
   console.log('Parsing result:', artworks);
   return {artworks, hasNext};
 };
+
+export function parseArtworkDetail(html: string): Artwork {
+  // TODO: HTML 파싱 로직 구현
+  return {
+    id: 0,
+    title: '',
+    thumbnailUrl: '',
+    tid: 0,
+    oid: 0,
+    author: '',
+    date: '',
+    tags: [],
+  };
+}

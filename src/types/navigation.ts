@@ -1,10 +1,21 @@
-export type RootStackParamList = {
+export type ArtworkStackParamList = {
+  ArtworkList: undefined;
+  ArtworkDetail: {
+    id: string;
+  };
+};
+
+export type RootDrawerParamList = {
   Home: undefined;
   RecentList: undefined;
-  ArtworkList: undefined;
+  ArtworkStack: {
+    screen: keyof ArtworkStackParamList;
+    params?: ArtworkStackParamList[keyof ArtworkStackParamList];
+  };
   HistoryList: undefined;
   Setting: undefined;
-  // 다른 화면들도 여기에 추가할 수 있습니다
 };
+
+export type RootStackParamList = RootDrawerParamList;
 
 export default RootStackParamList;

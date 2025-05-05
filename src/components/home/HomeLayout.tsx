@@ -10,7 +10,8 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '@/types/navigation';
 import MessagePopup from '@/components/common/MessagePopup';
 import {useTranslation} from 'react-i18next';
-import {parseHomeArtworks, HomeArtworks} from '@/helpers/parser';
+import {parseHomeArtworks} from '@/helpers/parser';
+import {HomeArtworks} from '@/types';
 
 const MemoizedRecentArtworks = React.memo(RecentArtworks);
 const MemoizedRecommendArtworks = React.memo(RecommendArtworks);
@@ -90,7 +91,6 @@ function HomeLayout(): React.JSX.Element {
           <MemoizedRecommendArtworks
             artworks={artworks.recommend}
             theme={currentTheme}
-            navigation={navigation}
           />
         </View>
         <View style={styles.section}>

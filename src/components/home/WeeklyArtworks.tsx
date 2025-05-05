@@ -6,7 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import {Artwork} from '@/helpers/parser';
+import {Artwork} from '@/types';
 import {useTranslation} from 'react-i18next';
 import {Theme} from '@/types/theme';
 
@@ -15,7 +15,10 @@ interface WeeklyArtworksProps {
   theme: Theme;
 }
 
-function WeeklyArtworks({artworks, theme}: WeeklyArtworksProps): React.JSX.Element {
+function WeeklyArtworks({
+  artworks,
+  theme,
+}: WeeklyArtworksProps): React.JSX.Element {
   const {t} = useTranslation();
 
   const artworkList = useMemo(

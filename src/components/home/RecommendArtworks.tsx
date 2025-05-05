@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useCallback} from 'react';
 import {
   View,
   ScrollView,
@@ -6,17 +6,17 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import {Artwork as ArtworkType} from '@/helpers/parser';
+import {Artwork as ArtworkType} from '@/types';
 import Artwork from './HomeArtwork';
 import {useTranslation} from 'react-i18next';
 import {Theme} from '@/types/theme';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import RootStackParamList from '@/types/navigation';
+import {useNavigation} from '@react-navigation/native';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {RootDrawerParamList} from '@/types/navigation';
 
 interface RecommendArtworksProps {
   artworks: ArtworkType[];
   theme: Theme;
-  navigation: NativeStackNavigationProp<RootStackParamList>;
 }
 
 const MemoizedArtwork = React.memo(Artwork);
@@ -24,17 +24,36 @@ const MemoizedArtwork = React.memo(Artwork);
 function RecommendArtworks({
   artworks,
   theme,
-  navigation,
 }: RecommendArtworksProps): React.JSX.Element {
   const {t} = useTranslation();
+  const navigation = useNavigation<DrawerNavigationProp<RootDrawerParamList>>();
 
-  const artworkList = useMemo(
-    () =>
-      artworks.map(artwork => (
-        <MemoizedArtwork key={artwork.id} artwork={artwork} theme={theme} />
-      )),
-    [artworks, theme],
+  const handleArtworkPress = useCallback(
+    (artwork: ArtworkType) => {
+      console.log('pressed');
+      console.log('artwork.id', artwork.id);
+      navigation.navigate('ArtworkStack', {
+        screen: 'ArtworkDetail',
+        params: {id: artwork.id.toString()},
+      });
+    },
+    [navigation],
   );
+
+  const handleMorePress = useCallback(() => {
+    navigation.navigate('ArtworkStack', {
+      screen: 'ArtworkList',
+    });
+  }, [navigation]);
+
+  const artworkList = artworks.map(artwork => (
+    <MemoizedArtwork
+      key={artwork.id}
+      artwork={artwork}
+      theme={theme}
+      onPress={() => handleArtworkPress(artwork)}
+    />
+  ));
 
   return (
     <View style={styles.container}>
@@ -44,9 +63,7 @@ function RecommendArtworks({
         </Text>
         <TouchableOpacity
           style={styles.moreButton}
-          onPress={() => {
-            navigation.navigate('ArtworkList');
-          }}>
+          onPress={handleMorePress}>
           <Text style={[styles.moreText, {color: theme.colors.text}]}>
             {t('common.more')}
           </Text>
@@ -78,7 +95,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   moreButton: {
-    padding: 4,
+    padding: 5,
   },
   moreText: {
     fontSize: 14,

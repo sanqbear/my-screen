@@ -1,20 +1,17 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
-import {Artwork as ArtworkType} from '@/helpers/parser';
+import {Artwork as ArtworkType} from '@/types';
 import {Theme} from '@/types/theme';
 
 interface ArtworkProps {
   artwork: ArtworkType;
   theme: Theme;
+  onPress: () => void;
 }
 
-function Artwork({artwork, theme}: ArtworkProps): React.JSX.Element {
+function Artwork({artwork, theme, onPress}: ArtworkProps): React.JSX.Element {
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={() => {
-        // TODO: 작품 상세 페이지로 이동
-      }}>
+    <TouchableOpacity style={styles.container} onPress={onPress}>
       <Image
         source={{uri: artwork.thumbnailUrl || undefined}}
         style={styles.thumbnail}

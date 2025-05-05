@@ -6,7 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import {Artwork as ArtworkType} from '@/helpers/parser';
+import {Artwork as ArtworkType} from '@/types';
 import Artwork from './HomeArtwork';
 import {useTranslation} from 'react-i18next';
 import {Theme} from '@/types/theme';
@@ -31,7 +31,14 @@ function RecentArtworks({
   const artworkList = useMemo(
     () =>
       artworks.map(artwork => (
-        <MemoizedArtwork key={artwork.id} artwork={artwork} theme={theme} />
+        <MemoizedArtwork
+          key={artwork.id}
+          artwork={artwork}
+          theme={theme}
+          onPress={() => {
+            // navigation.navigate('ArtworkDetail', {id: artwork.id.toString()});
+          }}
+        />
       )),
     [artworks, theme],
   );

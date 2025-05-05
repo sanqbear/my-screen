@@ -4,7 +4,8 @@ import useStore from '@/store/useStore';
 import axios from 'axios';
 import CaptchaWebView from '../captcha/CaptchaWebView';
 import {Buffer} from 'buffer';
-import {Artwork, parseArtworkList} from '@/helpers/parser';
+import {parseArtworkList} from '@/helpers/parser';
+import {Artwork} from '@/types';
 import ArtworkList from '@/components/common/ArtworkList';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -71,7 +72,8 @@ function ArtworkListLayout(): React.JSX.Element {
         }
 
         const decodedData = Buffer.from(response.data).toString('utf-8');
-        const {artworks: newArtworks, hasNext: nextHasNext} = parseArtworkList(decodedData);
+        const {artworks: newArtworks, hasNext: nextHasNext} =
+          parseArtworkList(decodedData);
         setHasNext(nextHasNext);
         setArtworks(prev => {
           if (shouldRefresh) {

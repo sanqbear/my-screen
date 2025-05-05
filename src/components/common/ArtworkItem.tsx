@@ -1,6 +1,6 @@
 import React, {memo} from 'react';
 import {View, Text, Image, StyleSheet} from 'react-native';
-import {Artwork} from '@/helpers/parser';
+import {Artwork} from '@/types';
 
 interface ArtworkItemProps {
   artwork: Artwork;

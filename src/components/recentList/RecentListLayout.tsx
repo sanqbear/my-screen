@@ -1,9 +1,10 @@
 import React, {useCallback, useEffect, useState, useRef} from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import useStore from '@/store/useStore';
-import {Artwork, parseRecentArtworks} from '@/helpers/parser';
+import {parseRecentArtworks} from '@/helpers/parser';
 import ArtworkList from '@/components/common/ArtworkList';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {Artwork} from '@/types';
 
 function RecentListLayout(): React.JSX.Element {
   const {apiUrl} = useStore();

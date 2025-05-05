@@ -6,19 +6,23 @@ import {
   DrawerContentComponentProps,
   DrawerNavigationOptions,
 } from '@react-navigation/drawer';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import HomeScreen from '@/screens/HomeScreen';
 import SettingScreen from '@/screens/SettingScreen';
 import RecentListScreen from '@/screens/RecentListScreen';
+import ArtworkListScreen from '@/screens/ArtworkListScreen';
+import ArtworkDetailScreen from '@/screens/ArtworkDetailScreen';
+import HistoryListScreen from '@/screens/HistoryListScreen';
 import useStore from '@/store/useStore';
 import {lightTheme, darkTheme} from '@/types/theme';
 import '@/i18n';
 import {useTranslation} from 'react-i18next';
-import RootStackParamList from '@/types/navigation';
-import ArtworkListScreen from './screens/ArtworkListScreen';
-import HistoryListScreen from './screens/HistoryListScreen';
-const Drawer = createDrawerNavigator<RootStackParamList>();
+import {RootDrawerParamList, ArtworkStackParamList} from '@/types/navigation';
+
+const Drawer = createDrawerNavigator<RootDrawerParamList>();
+const Stack = createNativeStackNavigator<ArtworkStackParamList>();
 
 const MenuButton = React.memo(
   ({onPress, color}: {onPress: () => void; color: string}) => (
@@ -29,7 +33,8 @@ const MenuButton = React.memo(
 );
 
 const MenuDrawerContent = React.memo(
-  ({navigation}: DrawerContentComponentProps) => {
+  (props: DrawerContentComponentProps) => {
+    const {navigation} = props;
     const {theme} = useStore();
     const {t} = useTranslation();
     const currentTheme = useMemo(
@@ -46,7 +51,7 @@ const MenuDrawerContent = React.memo(
       [navigation],
     );
     const handleArtworkListPress = useCallback(
-      () => navigation.navigate('ArtworkList'),
+      () => navigation.navigate('ArtworkStack', {screen: 'ArtworkList'}),
       [navigation],
     );
     const handleHistoryListPress = useCallback(
@@ -167,6 +172,28 @@ const MenuDrawerContent = React.memo(
   },
 );
 
+function ArtworkStack() {
+  const {t} = useTranslation();
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="ArtworkList"
+        component={ArtworkListScreen}
+        options={{
+          title: t('common.artworkList'),
+        }}
+      />
+      <Stack.Screen
+        name="ArtworkDetail"
+        component={ArtworkDetailScreen}
+        options={{
+          title: t('common.artworkDetail'),
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
 function App(): React.JSX.Element {
   const {theme} = useStore();
   const {t} = useTranslation();
@@ -179,7 +206,7 @@ function App(): React.JSX.Element {
     ({
       navigation,
     }: {
-      navigation: DrawerNavigationProp<RootStackParamList>;
+      navigation: DrawerNavigationProp<RootDrawerParamList>;
     }): DrawerNavigationOptions => ({
       headerStyle: {
         backgroundColor: currentTheme.colors.background,
@@ -222,8 +249,8 @@ function App(): React.JSX.Element {
           }}
         />
         <Drawer.Screen
-          name="ArtworkList"
-          component={ArtworkListScreen}
+          name="ArtworkStack"
+          component={ArtworkStack}
           options={{
             title: t('common.artworkList'),
           }}
