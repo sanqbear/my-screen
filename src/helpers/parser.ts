@@ -4,6 +4,7 @@ export interface Artwork {
   id: number;
   title: string;
   thumbnailUrl: string | null | undefined;
+  tid: number | null;
   oid: number | null;
   author: string | null;
   date: string | null;
@@ -81,6 +82,7 @@ export const parseHomeArtworks = (html: string, host: string): HomeArtworks => {
           .querySelector('img')
           ?.getAttribute('src')
           ?.replace(/^https?:\/\/[^/]+/, host),
+        tid: parseInt(link.getAttribute('href')?.split('comic/')[1] || '0', 10),
         oid: null,
         author: null,
         date: null,
@@ -111,6 +113,7 @@ export const parseHomeArtworks = (html: string, host: string): HomeArtworks => {
           .querySelector('img')
           ?.getAttribute('src')
           ?.replace(/^https?:\/\/[^/]+/, host),
+        tid: parseInt(link.getAttribute('href')?.split('comic/')[1] || '0', 10),
         oid: null,
         author: null,
         date: null,
@@ -144,6 +147,10 @@ export const parseHomeArtworks = (html: string, host: string): HomeArtworks => {
           .querySelector('img')
           ?.getAttribute('src')
           ?.replace(/^https?:\/\/[^/]+/, host),
+        tid: parseInt(
+          imgItem.getAttribute('href')?.split('comic/')[1] || '0',
+          10,
+        ),
         oid: null,
         author: null,
         date: null,
@@ -155,6 +162,55 @@ export const parseHomeArtworks = (html: string, host: string): HomeArtworks => {
 
   console.log('Parsing result:', homeArtworks);
   return homeArtworks;
+};
+
+export const parseArtworkList = (html: string): ArtworkPagedList => {
+  console.log('Starting HTML parsing');
+  const root = parse(html);
+  console.log('HTML parsing completed');
+
+  const listRows = root.querySelectorAll('.list-row');
+  console.log(`Found ${listRows.length} artworks`);
+
+  const artworks: Artwork[] = [];
+  listRows.forEach(row => {
+    const lableEl = row.querySelector('.in-lable');
+    const id = parseInt(lableEl?.getAttribute('rel') || '0', 10);
+    const title = lableEl?.querySelector('a')?.getAttribute('title') || '';
+    const thumbnailUrl =
+      row
+        .querySelector('.img-wrap')
+        ?.querySelector('img')
+        ?.getAttribute('src') || '';
+    const author =
+      row.querySelector('.list-artist')?.querySelector('a')?.text || '';
+
+      if(id && artworks.findIndex(artwork => artwork.id === id) === -1) {
+        const artwork: Artwork = {
+          id: id,
+          title: title,
+          thumbnailUrl: thumbnailUrl,
+          oid: id,
+          tid: null,
+          author: author,
+          date: null,
+          tags: [],
+        };
+        artworks.push(artwork);
+      }
+  });
+
+  let hasNext = true;
+  const arrowPages =
+    root.querySelector('.pagination')?.querySelectorAll('.disabled') || [];
+  arrowPages.forEach(pEl => {
+    const el = pEl.querySelector('.fa-angle-double-right');
+    if (el) {
+      hasNext = false;
+    }
+  });
+
+  return {artworks, hasNext};
 };
 
 export const parseRecentArtworks = (
@@ -209,6 +265,7 @@ export const parseRecentArtworks = (
         id,
         title: normalizeText(title),
         thumbnailUrl: imgUrl || null,
+        tid: id || null,
         oid: oid || null,
         author: author ? normalizeText(author).split('\n')[0]?.trim() : null,
         date: date || null,

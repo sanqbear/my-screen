@@ -10,9 +10,12 @@ interface AppState {
   theme: Theme;
   language: Language;
   apiUrl: string;
+  cloudflareCookies: string;
+  cloudflareReferer: string;
   setTheme: (theme: Theme) => void;
   setLanguage: (language: Language) => void;
   setApiUrl: (url: string) => void;
+  setCloudflareAuth: (cookies: string, referer: string) => void;
 }
 
 const useStore = create<AppState>()(
@@ -21,6 +24,8 @@ const useStore = create<AppState>()(
       theme: 'light',
       language: 'ko',
       apiUrl: 'https://api.example.com', // 기본 API URL을 설정하세요
+      cloudflareCookies: '',
+      cloudflareReferer: '',
 
       setTheme: theme => set({theme}),
       setLanguage: language => {
@@ -28,6 +33,8 @@ const useStore = create<AppState>()(
         set({language});
       },
       setApiUrl: apiUrl => set({apiUrl}),
+      setCloudflareAuth: (cookies, referer) =>
+        set({cloudflareCookies: cookies, cloudflareReferer: referer}),
     }),
     {
       name: 'app-storage',

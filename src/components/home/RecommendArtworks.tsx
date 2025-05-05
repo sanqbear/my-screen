@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {Artwork as ArtworkType} from '@/helpers/parser';
-import Artwork from './Artwork';
+import Artwork from './HomeArtwork';
 import {useTranslation} from 'react-i18next';
 import {Theme} from '@/types/theme';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
