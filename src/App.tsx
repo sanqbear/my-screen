@@ -175,7 +175,10 @@ const MenuDrawerContent = React.memo(
 function ArtworkStack() {
   const {t} = useTranslation();
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}>
       <Stack.Screen
         name="ArtworkList"
         component={ArtworkListScreen}

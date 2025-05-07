@@ -3,6 +3,7 @@ import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import useStore from '@/store/useStore';
 import axios from 'axios';
 import CaptchaWebView from '../captcha/CaptchaWebView';
+import ImageCaptchaView from '../captcha/ImageCaptchaView';
 import {Buffer} from 'buffer';
 import {parseArtworkList} from '@/helpers/parser';
 import {Artwork} from '@/types';
@@ -17,11 +18,19 @@ function ArtworkListLayout(): React.JSX.Element {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [hasNext, setHasNext] = useState(true);
   const [showCaptcha, setShowCaptcha] = useState(false);
+  const [showImageCaptcha, setShowImageCaptcha] = useState(false);
   const [challengeUrl, setChallengeUrl] = useState('');
   const [captchaCookies, setCaptchaCookies] = useState('');
   const [captchaReferer, setCaptchaReferer] = useState('');
   const [isCaptchaInProgress, setIsCaptchaInProgress] = useState(false);
   const flatListRef = useRef<any>(null);
+  const captchaCookiesRef = useRef(captchaCookies);
+  const captchaRefererRef = useRef(captchaReferer);
+
+  useEffect(() => {
+    captchaCookiesRef.current = captchaCookies;
+    captchaRefererRef.current = captchaReferer;
+  }, [captchaCookies, captchaReferer]);
 
   const fetchData = useCallback(
     async (page: number, shouldRefresh: boolean = false) => {
@@ -35,6 +44,51 @@ function ArtworkListLayout(): React.JSX.Element {
         const url = page === 1 ? `${apiUrl}/comic` : `${apiUrl}/comic/p${page}`;
         console.log('Fetching URL:', url);
 
+        // POST 요청 먼저 시도
+        try {
+          const postResponse = await axios.post(url, null, {
+            validateStatus: status => status < 500,
+            maxRedirects: 0,
+            headers: {
+              'User-Agent':
+                'Mozilla/5.0 (Linux; Android 13; SM-G981B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36',
+              Accept:
+                'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+              'Accept-Language': 'en-US,en;q=0.5',
+              Connection: 'keep-alive',
+              'Upgrade-Insecure-Requests': '1',
+              'Sec-Fetch-Dest': 'document',
+              'Sec-Fetch-Mode': 'navigate',
+              'Sec-Fetch-Site': 'none',
+              'Sec-Fetch-User': '?1',
+              'Cache-Control': 'max-age=0',
+              ...(captchaCookiesRef.current && {
+                Cookie: captchaCookiesRef.current,
+              }),
+              ...(captchaRefererRef.current && {
+                Referer: captchaRefererRef.current,
+              }),
+            },
+          });
+
+          console.log('POST Response Status:', postResponse.status);
+          console.log('POST Response Headers:', postResponse.headers);
+
+          if (postResponse.status === 302) {
+            const location = postResponse.headers.location;
+            if (location && location.includes('captcha.php')) {
+              console.log('302 Redirect - Image captcha detected from POST');
+              setIsCaptchaInProgress(true);
+              setChallengeUrl(location);
+              setShowImageCaptcha(true);
+              return;
+            }
+          }
+        } catch (postError) {
+          console.log('POST request failed:', postError);
+        }
+
+        // GET 요청 시도
         const response = await axios.get(url, {
           validateStatus: status => status < 500,
           maxRedirects: 0,
@@ -52,8 +106,12 @@ function ArtworkListLayout(): React.JSX.Element {
             'Sec-Fetch-Site': 'none',
             'Sec-Fetch-User': '?1',
             'Cache-Control': 'max-age=0',
-            ...(captchaCookies && {Cookie: captchaCookies}),
-            ...(captchaReferer && {Referer: captchaReferer}),
+            ...(captchaCookiesRef.current && {
+              Cookie: captchaCookiesRef.current,
+            }),
+            ...(captchaRefererRef.current && {
+              Referer: captchaRefererRef.current,
+            }),
           },
         });
 
@@ -63,6 +121,17 @@ function ArtworkListLayout(): React.JSX.Element {
           setChallengeUrl(url);
           setShowCaptcha(true);
           return;
+        }
+
+        if (response.status === 302) {
+          const location = response.headers.location;
+          if (location && location.includes('captcha.php')) {
+            console.log('302 Redirect - Image captcha detected');
+            setIsCaptchaInProgress(true);
+            setChallengeUrl(location);
+            setShowImageCaptcha(true);
+            return;
+          }
         }
 
         if (response.status >= 400) {
@@ -91,7 +160,7 @@ function ArtworkListLayout(): React.JSX.Element {
         setIsLoading(false);
       }
     },
-    [apiUrl, captchaCookies, captchaReferer, isCaptchaInProgress],
+    [apiUrl, isCaptchaInProgress],
   );
 
   const handleEndReached = useCallback(() => {
@@ -121,19 +190,47 @@ function ArtworkListLayout(): React.JSX.Element {
     fetchData(1);
   }, [fetchData]);
 
+  const handleCaptchaComplete = useCallback(
+    (result: {cookies: string; finalUrl: string}) => {
+      console.log('Captcha completed:', result);
+      setCaptchaCookies(result.cookies);
+      setCaptchaReferer(result.finalUrl);
+      setShowCaptcha(false);
+      setIsCaptchaInProgress(false);
+      fetchData(1, true);
+    },
+    [fetchData],
+  );
+
+  const handleImageCaptchaComplete = useCallback(
+    (result: {cookies: string; finalUrl: string}) => {
+      console.log('Image captcha completed:', result);
+      setCaptchaCookies(result.cookies);
+      setCaptchaReferer(result.finalUrl);
+      setShowImageCaptcha(false);
+      setIsCaptchaInProgress(false);
+      fetchData(1, true);
+    },
+    [fetchData],
+  );
+
   if (showCaptcha) {
     return (
       <View style={styles.container}>
         <CaptchaWebView
           url={challengeUrl}
-          onCaptchaComplete={result => {
-            console.log('Captcha completed:', result);
-            setCaptchaCookies(result.cookies);
-            setCaptchaReferer(result.finalUrl);
-            setShowCaptcha(false);
-            setIsCaptchaInProgress(false);
-            fetchData(1, true);
-          }}
+          onCaptchaComplete={handleCaptchaComplete}
+        />
+      </View>
+    );
+  }
+
+  if (showImageCaptcha) {
+    return (
+      <View style={styles.container}>
+        <ImageCaptchaView
+          url={challengeUrl}
+          onCaptchaComplete={handleImageCaptchaComplete}
         />
       </View>
     );
