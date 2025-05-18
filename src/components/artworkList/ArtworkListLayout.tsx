@@ -3,12 +3,13 @@ import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import useStore from '@/store/useStore';
 import axios from 'axios';
 import CaptchaWebView from '../captcha/CaptchaWebView';
-import ImageCaptchaView from '../captcha/ImageCaptchaView';
+import {ImageCaptchaView} from '../captcha/ImageCaptchaView';
 import {Buffer} from 'buffer';
-import {parseArtworkList} from '@/helpers/parser';
+import {parseArtworkList, revealCaptchaLink} from '@/helpers/parser';
 import {Artwork} from '@/types';
 import ArtworkList from '@/components/common/ArtworkList';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import CookieManager from '@react-native-cookies/cookies';
 
 function ArtworkListLayout(): React.JSX.Element {
   const {apiUrl} = useStore();
@@ -23,6 +24,8 @@ function ArtworkListLayout(): React.JSX.Element {
   const [captchaCookies, setCaptchaCookies] = useState('');
   const [captchaReferer, setCaptchaReferer] = useState('');
   const [isCaptchaInProgress, setIsCaptchaInProgress] = useState(false);
+  const [cloudflareCookies, setCloudflareCookies] = useState('');
+  const [phpSessionId, setPhpSessionId] = useState('');
   const flatListRef = useRef<any>(null);
   const captchaCookiesRef = useRef(captchaCookies);
   const captchaRefererRef = useRef(captchaReferer);
@@ -70,9 +73,6 @@ function ArtworkListLayout(): React.JSX.Element {
               }),
             },
           });
-
-          console.log('POST Response Status:', postResponse.status);
-          console.log('POST Response Headers:', postResponse.headers);
 
           if (postResponse.status === 302) {
             const location = postResponse.headers.location;
@@ -128,7 +128,7 @@ function ArtworkListLayout(): React.JSX.Element {
           if (location && location.includes('captcha.php')) {
             console.log('302 Redirect - Image captcha detected');
             setIsCaptchaInProgress(true);
-            setChallengeUrl(location);
+            setChallengeUrl(url);
             setShowImageCaptcha(true);
             return;
           }
@@ -140,7 +140,35 @@ function ArtworkListLayout(): React.JSX.Element {
           );
         }
 
+        if (response.headers['set-cookie']) {
+          const cookies = response.headers['set-cookie'];
+          setCloudflareCookies(cookies.join('; '));
+          const sessionCookie = cookies.find(cookie =>
+            cookie.includes('PHPSESSID'),
+          );
+          if (sessionCookie) {
+            const sid = sessionCookie.split(';')[0].split('=')[1];
+            setPhpSessionId(sid);
+          }
+        }
+
+        // CookieManager를 통해 PHPSESSID 확인
+        const cookies = await CookieManager.get(apiUrl);
+        const sessionId = cookies.PHPSESSID?.value;
+        if (sessionId) {
+          setPhpSessionId(sessionId);
+        }
+
         const decodedData = Buffer.from(response.data).toString('utf-8');
+        const link = revealCaptchaLink(decodedData);
+        if (link) {
+          console.log('Captcha link detected');
+          setIsCaptchaInProgress(true);
+          setChallengeUrl(url);
+          setShowImageCaptcha(true);
+          return;
+        }
+
         const {artworks: newArtworks, hasNext: nextHasNext} =
           parseArtworkList(decodedData);
         setHasNext(nextHasNext);
@@ -154,6 +182,7 @@ function ArtworkListLayout(): React.JSX.Element {
           );
           return [...prev, ...filteredArtworks];
         });
+        setCurrentPage(page);
       } catch (error) {
         console.error('Error in fetchData:', error);
       } finally {
@@ -214,28 +243,6 @@ function ArtworkListLayout(): React.JSX.Element {
     [fetchData],
   );
 
-  if (showCaptcha) {
-    return (
-      <View style={styles.container}>
-        <CaptchaWebView
-          url={challengeUrl}
-          onCaptchaComplete={handleCaptchaComplete}
-        />
-      </View>
-    );
-  }
-
-  if (showImageCaptcha) {
-    return (
-      <View style={styles.container}>
-        <ImageCaptchaView
-          url={challengeUrl}
-          onCaptchaComplete={handleImageCaptchaComplete}
-        />
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
       <ArtworkList
@@ -251,6 +258,23 @@ function ArtworkListLayout(): React.JSX.Element {
           <Icon name="arrow-upward" size={24} color="#fff" />
         </TouchableOpacity>
       )}
+      {showCaptcha && (
+        <CaptchaWebView
+          url={challengeUrl}
+          onCaptchaComplete={handleCaptchaComplete}
+        />
+      )}
+      <ImageCaptchaView
+        visible={showImageCaptcha}
+        returnUrl={challengeUrl}
+        onSuccess={handleImageCaptchaComplete}
+        onCancel={() => {
+          setShowImageCaptcha(false);
+          setIsCaptchaInProgress(false);
+        }}
+        cloudflareCookies={cloudflareCookies}
+        phpSessionId={phpSessionId}
+      />
     </View>
   );
 }

@@ -12,6 +12,8 @@ import MessagePopup from '@/components/common/MessagePopup';
 import {useTranslation} from 'react-i18next';
 import {parseHomeArtworks} from '@/helpers/parser';
 import {HomeArtworks} from '@/types';
+import axios from 'axios';
+import CookieManager from '@react-native-cookies/cookies';
 
 const MemoizedRecentArtworks = React.memo(RecentArtworks);
 const MemoizedRecommendArtworks = React.memo(RecommendArtworks);
@@ -34,13 +36,43 @@ function HomeLayout(): React.JSX.Element {
   );
   const {t} = useTranslation();
 
+  const getCookiesFromResponse = useCallback(async () => {
+    const cookies = await CookieManager.get(apiUrl);
+    return cookies;
+  }, [apiUrl]);
+
   const fetchData = useCallback(async () => {
     try {
-      const response = await fetch(apiUrl);
-      if (!response.ok) {
-        throw new Error('API 호출에 실패했습니다.');
-      }
-      const html = await response.text();
+      const response = await axios.get(apiUrl, {
+        validateStatus: status => status < 500,
+        maxRedirects: 0,
+        withCredentials: true,
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Linux; Android 13; SM-G981B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36 Edg/136.0.0.0',
+          Accept:
+            'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.5',
+          Connection: 'keep-alive',
+          'Upgrade-Insecure-Requests': '1',
+          'Sec-Fetch-Dest': 'document',
+          'Sec-Fetch-Mode': 'navigate',
+          'Sec-Fetch-Site': 'none',
+          'Sec-Fetch-User': '?1',
+          'Cache-Control': 'max-age=0',
+          'Origin': apiUrl,
+        },
+      });
+
+      console.log('GET Response Status:', response.status);
+      console.log('GET Response Headers:', response.headers);
+
+      // react-native-cookies를 사용해서 쿠키 확인
+      const cookies = await getCookiesFromResponse();
+      console.log('GET Response Cookies:', cookies);
+
+      // set-cookie 헤더 추출
+      const html = response.data;
       const host = apiUrl.match(/^https?:\/\/[^/]+/)?.[0] || '';
       const parsedArtworks = parseHomeArtworks(html, host);
       setArtworks(parsedArtworks);
@@ -50,7 +82,7 @@ function HomeLayout(): React.JSX.Element {
     } finally {
       setRefreshing(false);
     }
-  }, [apiUrl]);
+  }, [apiUrl, getCookiesFromResponse]);
 
   useEffect(() => {
     fetchData();

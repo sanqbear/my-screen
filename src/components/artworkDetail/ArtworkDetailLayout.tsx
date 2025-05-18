@@ -4,8 +4,9 @@ import useStore from '@/store/useStore';
 import axios from 'axios';
 import {Buffer} from 'buffer';
 import CaptchaWebView from '../captcha/CaptchaWebView';
-import ImageCaptchaView from '../captcha/ImageCaptchaView';
-import {parseArtworkDetail} from '@/helpers/parser';
+import {ImageCaptchaView} from '../captcha/ImageCaptchaView';
+import {parseArtworkDetail, revealCaptchaLink} from '@/helpers/parser';
+import CookieManager from '@react-native-cookies/cookies';
 
 interface Props {
   id: string;
@@ -17,16 +18,14 @@ function ArtworkDetailLayout({id}: Props): React.JSX.Element {
   const [showCaptcha, setShowCaptcha] = useState(false);
   const [showImageCaptcha, setShowImageCaptcha] = useState(false);
   const [challengeUrl, setChallengeUrl] = useState('');
-  const [captchaCookies, setCaptchaCookies] = useState('');
-  const [captchaReferer, setCaptchaReferer] = useState('');
+  const [cloudflareCookies, setCloudflareCookies] = useState('');
+  const [phpSessionId, setPhpSessionId] = useState('');
   const [isCaptchaInProgress, setIsCaptchaInProgress] = useState(false);
-  const captchaCookiesRef = useRef(captchaCookies);
-  const captchaRefererRef = useRef(captchaReferer);
+  const captchaCookiesRef = useRef(cloudflareCookies);
 
   useEffect(() => {
-    captchaCookiesRef.current = captchaCookies;
-    captchaRefererRef.current = captchaReferer;
-  }, [captchaCookies, captchaReferer]);
+    captchaCookiesRef.current = cloudflareCookies;
+  }, [cloudflareCookies]);
 
   const fetchData = useCallback(async () => {
     if (isCaptchaInProgress) {
@@ -57,11 +56,9 @@ function ArtworkDetailLayout({id}: Props): React.JSX.Element {
             'Sec-Fetch-Site': 'none',
             'Sec-Fetch-User': '?1',
             'Cache-Control': 'max-age=0',
+            'Origin': apiUrl,
             ...(captchaCookiesRef.current && {
               Cookie: captchaCookiesRef.current,
-            }),
-            ...(captchaRefererRef.current && {
-              Referer: captchaRefererRef.current,
             }),
           },
         });
@@ -74,7 +71,7 @@ function ArtworkDetailLayout({id}: Props): React.JSX.Element {
           if (location && location.includes('captcha.php')) {
             console.log('302 Redirect - Image captcha detected from POST');
             setIsCaptchaInProgress(true);
-            setChallengeUrl(location);
+            setChallengeUrl(url);
             setShowImageCaptcha(true);
             return;
           }
@@ -101,14 +98,15 @@ function ArtworkDetailLayout({id}: Props): React.JSX.Element {
           'Sec-Fetch-Site': 'none',
           'Sec-Fetch-User': '?1',
           'Cache-Control': 'max-age=0',
+          'Origin': apiUrl,
           ...(captchaCookiesRef.current && {
             Cookie: captchaCookiesRef.current,
           }),
-          ...(captchaRefererRef.current && {
-            Referer: captchaRefererRef.current,
-          }),
         },
       });
+
+      console.log('GET Response Status:', response.status);
+      console.log('GET Response Headers:', response.headers);
 
       if (response.status === 403) {
         console.log('403 Forbidden - Cloudflare challenge detected');
@@ -133,8 +131,36 @@ function ArtworkDetailLayout({id}: Props): React.JSX.Element {
         throw new Error(`API 호출에 실패했습니다. Status: ${response.status}`);
       }
 
+      if (response.headers['set-cookie']) {
+        const cookies = response.headers['set-cookie'];
+        setCloudflareCookies(cookies.join('; '));
+        const sessionCookie = cookies.find(cookie =>
+          cookie.includes('PHPSESSID'),
+        );
+        if (sessionCookie) {
+          const sid = sessionCookie.split(';')[0].split('=')[1];
+          setPhpSessionId(sid);
+        }
+      }
+
+      // CookieManager를 통해 PHPSESSID 확인
+      const cookies = await CookieManager.get(apiUrl);
+      const sessionId = cookies.PHPSESSID?.value;
+      if (sessionId) {
+        setPhpSessionId(sessionId);
+      }
+
       const decodedData = Buffer.from(response.data).toString('utf-8');
-      console.log(decodedData);
+
+      const link = revealCaptchaLink(decodedData);
+      if (link) {
+        console.log('Captcha link detected');
+        setIsCaptchaInProgress(true);
+        setChallengeUrl(url);
+        setShowImageCaptcha(true);
+        return;
+      }
+
       const artworkDetail = parseArtworkDetail(decodedData);
       console.log('Artwork detail:', artworkDetail);
     } catch (error) {
@@ -151,8 +177,7 @@ function ArtworkDetailLayout({id}: Props): React.JSX.Element {
   const handleCaptchaComplete = useCallback(
     (result: {cookies: string; finalUrl: string}) => {
       console.log('Captcha completed:', result);
-      setCaptchaCookies(result.cookies);
-      setCaptchaReferer(result.finalUrl);
+      setCloudflareCookies(result.cookies);
       setShowCaptcha(false);
       setIsCaptchaInProgress(false);
       fetchData();
@@ -163,8 +188,7 @@ function ArtworkDetailLayout({id}: Props): React.JSX.Element {
   const handleImageCaptchaComplete = useCallback(
     (result: {cookies: string; finalUrl: string}) => {
       console.log('Image captcha completed:', result);
-      setCaptchaCookies(result.cookies);
-      setCaptchaReferer(result.finalUrl);
+      setCloudflareCookies(result.cookies);
       setShowImageCaptcha(false);
       setIsCaptchaInProgress(false);
       fetchData();
@@ -172,41 +196,41 @@ function ArtworkDetailLayout({id}: Props): React.JSX.Element {
     [fetchData],
   );
 
-  if (showCaptcha) {
-    return (
-      <View style={styles.container}>
+  return (
+    <View style={styles.container}>
+      {isLoading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <View style={styles.content}>{/* 여기에 작품 상세 내용을 표시 */}</View>
+      )}
+      {showCaptcha && (
         <CaptchaWebView
           url={challengeUrl}
           onCaptchaComplete={handleCaptchaComplete}
         />
-      </View>
-    );
-  }
-
-  if (showImageCaptcha) {
-    return (
-      <View style={styles.container}>
-        <ImageCaptchaView
-          url={challengeUrl}
-          onCaptchaComplete={handleImageCaptchaComplete}
-        />
-      </View>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
-
-  return <View style={styles.container} />;
+      )}
+      <ImageCaptchaView
+        visible={showImageCaptcha}
+        returnUrl={challengeUrl}
+        onSuccess={handleImageCaptchaComplete}
+        onCancel={() => {
+          setShowImageCaptcha(false);
+          setIsCaptchaInProgress(false);
+        }}
+        cloudflareCookies={cloudflareCookies}
+        phpSessionId={phpSessionId}
+      />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

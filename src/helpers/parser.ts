@@ -262,6 +262,17 @@ export const parseRecentArtworks = (
   return {artworks, hasNext};
 };
 
+export function revealCaptchaLink(html: string): string {
+  const root = parse(html);
+  const captchaLink = root
+    .querySelector('meta[property="og:url"]')
+    ?.getAttribute('content');
+  if (captchaLink && captchaLink.startsWith('http://')) {
+    return captchaLink.replace('http://', 'https://');
+  }
+  return captchaLink || '';
+}
+
 export function parseArtworkDetail(html: string): Artwork {
   // TODO: HTML 파싱 로직 구현
   return {

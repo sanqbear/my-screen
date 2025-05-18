@@ -1,91 +1,172 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {
   View,
-  StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
-  Text,
+  Modal,
+  Dimensions,
   Image,
+  ActivityIndicator,
+  StyleSheet,
 } from 'react-native';
 import axios from 'axios';
 import {Buffer} from 'buffer';
+import useStore from '@/store/useStore';
 
 interface ImageCaptchaViewProps {
-  url: string;
-  onCaptchaComplete: (result: {cookies: string; finalUrl: string}) => void;
+  visible: boolean;
+  returnUrl: string;
+  onSuccess: (result: {cookies: string; finalUrl: string}) => void;
+  onCancel: () => void;
+  cloudflareCookies: string;
+  phpSessionId: string;
 }
 
-function ImageCaptchaView({url, onCaptchaComplete}: ImageCaptchaViewProps) {
-  const [captchaImage, setCaptchaImage] = useState<string>('');
-  const [answer, setAnswer] = useState('');
-  const [sessionId, setSessionId] = useState('');
+const USER_AGENT =
+  'Mozilla/5.0 (Linux; Android 13; SM-G981B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36';
 
-  useEffect(() => {
-    const initCaptcha = async () => {
+export const ImageCaptchaView: React.FC<ImageCaptchaViewProps> = ({
+  visible,
+  returnUrl,
+  onSuccess,
+  onCancel,
+  cloudflareCookies,
+  phpSessionId,
+}) => {
+  const {apiUrl} = useStore();
+  const [sessionId, setSessionId] = useState(phpSessionId);
+  const [answer, setAnswer] = useState('');
+  const [captchaImage, setCaptchaImage] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  const getSessionId = useCallback(async () => {
+    let sessionCookie = '';
+    let tries = 3;
+
+    while (tries > 0) {
       try {
-        // 세션 초기화
         const sessionResponse = await axios.post(
-          `${url}/plugin/kcaptcha/kcaptcha_session.php`,
+          `${apiUrl}/plugin/kcaptcha/kcaptcha_session.php`,
           {},
           {
             headers: {
-              'User-Agent':
-                'Mozilla/5.0 (Linux; Android 13; SM-G981B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36',
+              'User-Agent': USER_AGENT,
+              Cookie: cloudflareCookies,
+              'Origin': apiUrl,
+              Referer: returnUrl,
             },
+            validateStatus: status => status < 500,
+            maxRedirects: 0,
           },
         );
 
-        const cookies = sessionResponse.headers['set-cookie'];
-        if (cookies) {
-          const sessionCookie = cookies.find(cookie =>
-            cookie.includes('PHPSESSID'),
-          );
-          if (sessionCookie) {
-            const sessionId = sessionCookie.split(';')[0].split('=')[1];
-            setSessionId(sessionId);
+        if (sessionResponse.status === 200) {
+          const cookies = sessionResponse.headers['set-cookie'];
+          if (cookies) {
+            console.log(cookies);
+            sessionCookie =
+              cookies.find(cookie => cookie.includes('PHPSESSID')) || '';
+            if (sessionCookie) {
+              const sid = sessionCookie.split(';')[0].split('=')[1];
+              if (sid !== sessionId) {
+                setSessionId(sid);
+              }
+              break;
+            }
           }
         }
-
-        // 캡차 이미지 가져오기
-        const imageResponse = await axios.get(
-          `${url}/plugin/kcaptcha/kcaptcha_image.php?t=${Date.now()}`,
-          {
-            responseType: 'arraybuffer',
-            headers: {
-              Cookie: `PHPSESSID=${sessionId}`,
-            },
-          },
-        );
-
-        const base64Image = Buffer.from(imageResponse.data).toString('base64');
-        setCaptchaImage(`data:image/png;base64,${base64Image}`);
       } catch (error) {
-        console.error('Error initializing captcha:', error);
+        console.error('Session error:', error);
       }
-    };
+      tries--;
+      if (tries > 0) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
+  }, [apiUrl, cloudflareCookies, sessionId, returnUrl]);
 
-    initCaptcha();
-  }, [url]);
+  const initCaptcha = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setAnswer('');
+      if (!sessionId) {
+        await getSessionId();
+      }
 
-  const handleSubmit = async () => {
+      // 캡차 이미지 가져오기
+      const imageResponse = await axios.get(
+        `${apiUrl}/plugin/kcaptcha/kcaptcha_image.php?t=${Date.now()}`,
+        {
+          responseType: 'arraybuffer',
+          headers: {
+            Cookie: `PHPSESSID=${sessionId}; ${cloudflareCookies}`,
+            'User-Agent': USER_AGENT,
+            Accept:
+              'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+            Connection: 'keep-alive',
+            'Sec-Fetch-Dest': 'image',
+            'Sec-Fetch-Mode': 'no-cors',
+            'Sec-Fetch-Site': 'same-origin',
+            'Origin': apiUrl,
+            Referer: apiUrl,
+          },
+          validateStatus: status => status < 500,
+        },
+      );
+
+      if (
+        imageResponse.status === 200 &&
+        imageResponse.headers['content-type']?.includes('image')
+      ) {
+        const base64Image = Buffer.from(imageResponse.data).toString('base64');
+        setCaptchaImage(base64Image);
+      } else {
+        console.error(
+          'Invalid image response:',
+          Buffer.from(imageResponse.data).toString('utf-8'),
+        );
+        throw new Error('캡차 이미지를 가져오는데 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('Error initializing captcha:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [apiUrl, sessionId, cloudflareCookies, getSessionId]);
+
+  useEffect(() => {
+    if (visible) {
+      initCaptcha();
+    }
+  }, [visible, phpSessionId, initCaptcha]);
+
+  const handleSubmit = async (url: string) => {
     try {
       const response = await axios.post(
-        `${url}/bbs/captcha_check.php`,
+        `${apiUrl}/bbs/captcha_check.php`,
         new URLSearchParams({
-          url: url,
+          url: apiUrl,
           captcha_key: answer,
         }).toString(),
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            Cookie: `PHPSESSID=${sessionId}`,
+            Cookie: `PHPSESSID=${sessionId}; ${cloudflareCookies}`,
+            'User-Agent': USER_AGENT,
+            'Origin': apiUrl,
+            Referer: `${apiUrl}/bbs/captcha_check.php`,
           },
+          maxRedirects: 0,
         },
       );
 
+      console.log(response);
+
       if (response.status === 200) {
-        onCaptchaComplete({
-          cookies: `PHPSESSID=${sessionId}`,
+        onSuccess({
+          cookies: `PHPSESSID=${sessionId}; ${cloudflareCookies}`,
           finalUrl: url,
         });
       }
@@ -95,45 +176,81 @@ function ImageCaptchaView({url, onCaptchaComplete}: ImageCaptchaViewProps) {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.webviewContainer}>
-        <Text style={styles.url}>{url}</Text>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onCancel}>
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContent}>
+          <View style={styles.header}>
+            <Text style={styles.title}>캡차 인증</Text>
+            <TouchableOpacity onPress={onCancel} style={styles.closeButton}>
+              <Text style={styles.closeButtonText}>✕</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.captchaContainer}>
+            {isLoading ? (
+              <ActivityIndicator size="large" color="#0000ff" />
+            ) : captchaImage ? (
+              <Image
+                source={{uri: `data:image/png;base64,${captchaImage}`}}
+                style={styles.captchaImage}
+                resizeMode="contain"
+              />
+            ) : null}
+            <TextInput
+              style={styles.input}
+              value={answer}
+              onChangeText={setAnswer}
+              placeholder="캡차 답을 입력하세요"
+              placeholderTextColor="#666"
+            />
+            <TouchableOpacity
+              style={styles.submitButton}
+              onPress={() => handleSubmit(returnUrl)}>
+              <Text style={styles.submitButtonText}>확인</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
-      <View style={styles.captchaContainer}>
-        {captchaImage ? (
-          <Image source={{uri: captchaImage}} style={styles.captchaImage} />
-        ) : null}
-        <TextInput
-          style={styles.input}
-          value={answer}
-          onChangeText={setAnswer}
-          placeholder="캡차 답을 입력하세요"
-          placeholderTextColor="#666"
-        />
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitButtonText}>확인</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </Modal>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  container: {
+  modalOverlay: {
     flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: Dimensions.get('window').width * 0.9,
     backgroundColor: '#fff',
+    borderRadius: 10,
+    overflow: 'hidden',
   },
-  webviewContainer: {
-    height: 100,
-    padding: 10,
-    backgroundColor: '#f5f5f5',
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
   },
-  url: {
-    fontSize: 12,
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  closeButton: {
+    padding: 5,
+  },
+  closeButtonText: {
+    fontSize: 20,
     color: '#666',
   },
   captchaContainer: {
-    flex: 1,
     padding: 20,
     alignItems: 'center',
   },
@@ -141,6 +258,8 @@ const styles = StyleSheet.create({
     width: 200,
     height: 80,
     marginBottom: 20,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 4,
   },
   input: {
     width: '100%',
@@ -162,5 +281,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
-export default ImageCaptchaView; 
