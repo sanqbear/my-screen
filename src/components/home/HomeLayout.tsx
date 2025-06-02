@@ -12,8 +12,8 @@ import MessagePopup from '@/components/common/MessagePopup';
 import {useTranslation} from 'react-i18next';
 import {parseHomeArtworks} from '@/helpers/parser';
 import {HomeArtworks} from '@/types';
-import axios from 'axios';
 import CookieManager from '@react-native-cookies/cookies';
+import api from '@/services/api';
 
 const MemoizedRecentArtworks = React.memo(RecentArtworks);
 const MemoizedRecommendArtworks = React.memo(RecommendArtworks);
@@ -43,7 +43,7 @@ function HomeLayout(): React.JSX.Element {
 
   const fetchData = useCallback(async () => {
     try {
-      const response = await axios.get(apiUrl, {
+      const response = await api.get(apiUrl, {
         validateStatus: status => status < 500,
         maxRedirects: 0,
         withCredentials: true,
@@ -60,7 +60,7 @@ function HomeLayout(): React.JSX.Element {
           'Sec-Fetch-Site': 'none',
           'Sec-Fetch-User': '?1',
           'Cache-Control': 'max-age=0',
-          'Origin': apiUrl,
+          Origin: apiUrl,
         },
       });
 

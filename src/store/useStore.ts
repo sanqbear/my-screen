@@ -3,19 +3,20 @@ import {createJSONStorage, persist} from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18n from '@/i18n';
 
-export type Theme = 'light' | 'dark';
 export type Language = 'ko' | 'en' | 'ja' | 'zh';
 
 interface AppState {
-  theme: Theme;
+  theme: 'light' | 'dark';
   language: Language;
   apiUrl: string;
   cloudflareCookies: string;
   cloudflareReferer: string;
-  setTheme: (theme: Theme) => void;
+  phpSessionId: string | null;
+  setTheme: (theme: 'light' | 'dark') => void;
   setLanguage: (language: Language) => void;
   setApiUrl: (url: string) => void;
   setCloudflareAuth: (cookies: string, referer: string) => void;
+  setPhpSessionId: (sessionId: string | null) => void;
 }
 
 const useStore = create<AppState>()(
@@ -26,6 +27,7 @@ const useStore = create<AppState>()(
       apiUrl: 'https://api.example.com', // 기본 API URL을 설정하세요
       cloudflareCookies: '',
       cloudflareReferer: '',
+      phpSessionId: null,
 
       setTheme: theme => set({theme}),
       setLanguage: language => {
@@ -35,6 +37,7 @@ const useStore = create<AppState>()(
       setApiUrl: apiUrl => set({apiUrl}),
       setCloudflareAuth: (cookies, referer) =>
         set({cloudflareCookies: cookies, cloudflareReferer: referer}),
+      setPhpSessionId: phpSessionId => set({phpSessionId}),
     }),
     {
       name: 'app-storage',

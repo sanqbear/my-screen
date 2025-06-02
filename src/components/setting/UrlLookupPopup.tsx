@@ -11,7 +11,7 @@ import {
 import useStore from '@/store/useStore';
 import {lightTheme, darkTheme} from '@/types/theme';
 import {useTranslation} from 'react-i18next';
-import axios from 'axios';
+import api from '@/services/api';
 
 interface UrlLookupPopupProps {
   visible: boolean;
@@ -53,10 +53,10 @@ const UrlLookupPopup: React.FC<UrlLookupPopupProps> = ({visible, onClose}) => {
 
   const checkUrl = async (url: string): Promise<boolean> => {
     try {
-      const response = await axios.head(url, {
-        timeout: 3000, // 3초 타임아웃
-        validateStatus: status => status === 200, // 200 상태 코드는 유효한 것으로 간주
-        maxRedirects: 0, // 리다이렉트 비활성화
+      const response = await api.head(url, {
+        timeout: 3000,
+        validateStatus: status => status === 200,
+        maxRedirects: 0,
       });
 
       // Cloudflare 관련 헤더 확인

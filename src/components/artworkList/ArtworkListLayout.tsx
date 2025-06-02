@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState, useRef} from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import useStore from '@/store/useStore';
-import axios from 'axios';
 import CaptchaWebView from '../captcha/CaptchaWebView';
 import {ImageCaptchaView} from '../captcha/ImageCaptchaView';
 import {Buffer} from 'buffer';
@@ -10,6 +9,7 @@ import {Artwork} from '@/types';
 import ArtworkList from '@/components/common/ArtworkList';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import CookieManager from '@react-native-cookies/cookies';
+import api from '@/services/api';
 
 function ArtworkListLayout(): React.JSX.Element {
   const {apiUrl} = useStore();
@@ -49,7 +49,7 @@ function ArtworkListLayout(): React.JSX.Element {
 
         // POST 요청 먼저 시도
         try {
-          const postResponse = await axios.post(url, null, {
+          const postResponse = await api.post(url, null, {
             validateStatus: status => status < 500,
             maxRedirects: 0,
             headers: {
@@ -89,7 +89,7 @@ function ArtworkListLayout(): React.JSX.Element {
         }
 
         // GET 요청 시도
-        const response = await axios.get(url, {
+        const response = await api.get(url, {
           validateStatus: status => status < 500,
           maxRedirects: 0,
           responseType: 'arraybuffer',
