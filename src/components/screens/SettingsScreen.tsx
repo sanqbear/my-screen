@@ -6,6 +6,7 @@ import SettingInformationRow from '../settings/SettingInformationRow';
 import {useTranslation} from 'react-i18next';
 import SettingSelectModal from '../settings/SettingSelectModal';
 import SettingApiSetupModal from '../settings/SettingApiSetupModal';
+import SettingApiLookupModal from '../settings/SettingApiLookupModal';
 
 function SettingsScreen() {
   const {theme, language, apiUrl, setTheme, setLanguage, setApiUrl} =
@@ -21,6 +22,7 @@ function SettingsScreen() {
   const [isSettingModalVisible, setIsSettingModalVisible] = useState(false);
   const [isLanguageModalVisible, setIsLanguageModalVisible] = useState(false);
   const [isApiUrlModalVisible, setIsApiUrlModalVisible] = useState(false);
+  const [isApiLookupModalVisible, setIsApiLookupModalVisible] = useState(false);
 
   const handleThemePress = useCallback(
     (key: string) => {
@@ -37,6 +39,11 @@ function SettingsScreen() {
     },
     [setLanguage],
   );
+
+  const handleApiUrlLookup = useCallback(() => {
+    setIsApiUrlModalVisible(false);
+    setIsApiLookupModalVisible(true);
+  }, [setIsApiUrlModalVisible, setIsApiLookupModalVisible]);
 
   const handleApiUrlSubmit = useCallback(
     (url: string) => {
@@ -98,11 +105,18 @@ function SettingsScreen() {
         onPressItem={handleLanguagePress}
         onClose={() => setIsLanguageModalVisible(false)}
       />
+      <SettingApiLookupModal
+        visible={isApiLookupModalVisible}
+        isDark={isDark}
+        onSubmit={handleApiUrlSubmit}
+        onClose={() => setIsApiLookupModalVisible(false)}
+      />
       <SettingApiSetupModal
         visible={isApiUrlModalVisible}
         isDark={isDark}
         value={apiUrl}
         onSubmit={handleApiUrlSubmit}
+        onPressLookup={handleApiUrlLookup}
         onClose={() => setIsApiUrlModalVisible(false)}
       />
     </SafeAreaView>

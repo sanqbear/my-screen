@@ -30,6 +30,10 @@
     "zh": "Chinese",
     "apiUrl": "API URL",
     "setupApiUrl": "Setup API URL",
-    "apiUrlPlaceholder": "https://api.example.com"
+    "apiUrlPlaceholder": "https://api.example.com",
+    "lookupApiUrl": "Lookup API URL",
+    "lookupApiUrlInstruction": "Enter the base URL of the API you want to use.",
+    "stopLookup": "Stop Lookup",
+    "searching": "Searching..."
   }
 }

@@ -16,6 +16,7 @@ interface SettingApiSetupModalProps {
   isDark: boolean;
   value: string;
   onSubmit: (url: string) => void;
+  onPressLookup: () => void;
   onClose: () => void;
 }
 
@@ -24,6 +25,7 @@ function SettingApiSetupModal({
   isDark,
   value,
   onSubmit,
+  onPressLookup,
   onClose,
 }: SettingApiSetupModalProps) {
   const currentTheme = useMemo(() => {
@@ -67,6 +69,14 @@ function SettingApiSetupModal({
               {t('settings.setupApiUrl')}
             </Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, {backgroundColor: currentTheme.secondary}]}
+            onPress={onPressLookup}>
+            <Text
+              style={[styles.buttonText, {color: currentTheme.textSecondary}]}>
+              {t('settings.lookupApiUrl')}
+            </Text>
+          </TouchableOpacity>
         </View>
       </Pressable>
     </Modal>
@@ -84,6 +94,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     elevation: 5,
+    gap: 10,
   },
   title: {
     fontSize: 18,

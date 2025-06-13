@@ -30,6 +30,10 @@
     "zh": "中文",
     "apiUrl": "API 地址",
     "setupApiUrl": "设置 API 地址",
-    "apiUrlPlaceholder": "https://api.example.com"
+    "apiUrlPlaceholder": "https://api.example.com",
+    "lookupApiUrl": "查找 API 地址",
+    "lookupApiUrlInstruction": "输入您要使用的 API 的基地址。",
+    "stopLookup": "停止查找",
+    "searching": "查找中..."
   }
 }

@@ -30,6 +30,10 @@
     "zh": "중국어",
     "apiUrl": "API 주소",
     "setupApiUrl": "API 주소 설정",
-    "apiUrlPlaceholder": "https://api.example.com"
+    "apiUrlPlaceholder": "https://api.example.com",
+    "lookupApiUrl": "API 주소 검색",
+    "lookupApiUrlInstruction": "색인하려는 API의 기본 URL을 입력하세요.",
+    "stopLookup": "검색 중지",
+    "searching": "검색 중..."
   }
 }
