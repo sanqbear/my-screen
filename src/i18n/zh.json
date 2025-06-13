@@ -34,6 +34,8 @@
     "lookupApiUrl": "查找 API 地址",
     "lookupApiUrlInstruction": "输入您要使用的 API 的基地址。",
     "stopLookup": "停止查找",
-    "searching": "查找中..."
+    "searching": "查找中...",
+    "validUrls": "有效地址",
+    "noValidUrls": "没有找到有效地址"
   }
 }

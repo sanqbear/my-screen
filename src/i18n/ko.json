@@ -34,6 +34,8 @@
     "lookupApiUrl": "API 주소 검색",
     "lookupApiUrlInstruction": "색인하려는 API의 기본 URL을 입력하세요.",
     "stopLookup": "검색 중지",
-    "searching": "검색 중..."
+    "searching": "검색 중...",
+    "validUrls": "유효한 URL",
+    "noValidUrls": "아직 색인된 URL이 없습니다."
   }
 }

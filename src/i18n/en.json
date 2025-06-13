@@ -34,6 +34,8 @@
     "lookupApiUrl": "Lookup API URL",
     "lookupApiUrlInstruction": "Enter the base URL of the API you want to use.",
     "stopLookup": "Stop Lookup",
-    "searching": "Searching..."
+    "searching": "Searching...",
+    "validUrls": "Valid URLs",
+    "noValidUrls": "No URLs found"
   }
 }

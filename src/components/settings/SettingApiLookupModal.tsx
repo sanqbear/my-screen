@@ -1,6 +1,6 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {darkTheme, lightTheme} from '@/types';
-import {useTranslation} from 'react-i18next';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { darkTheme, lightTheme } from '@/types';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   Modal,
@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import ReactNativeBlobUtil from 'react-native-blob-util';
+import { checkUrl, generateLookupUrl } from '@/api';
 
 interface SettingApiLookupModalProps {
   visible: boolean;
@@ -21,72 +21,6 @@ interface SettingApiLookupModalProps {
   onClose: () => void;
 }
 
-const generateLookupUrl = (url: string, index: number) => {
-  try {
-    // URL에서 프로토콜과 도메인을 분리
-    const protocolMatch = url.match(/^(https?:\/\/)/);
-    const protocol = protocolMatch ? protocolMatch[0] : 'https://';
-    const domainAndPath = url.replace(/^(https?:\/\/)/, '');
-
-    // 도메인과 경로를 분리
-    const [domain, ...pathParts] = domainAndPath.split('/');
-    const path = pathParts.length > 0 ? '/' + pathParts.join('/') : '';
-
-    // 도메인을 부분으로 분리
-    const domainParts = domain.split('.');
-
-    // 도메인 이름의 첫 부분에 번호를 삽입
-    if (domainParts.length >= 2) {
-      domainParts[0] = `${domainParts[0]}${index}`;
-    }
-
-    // URL을 재구성
-    return `${protocol}${domainParts.join('.')}${path}`;
-  } catch (e) {
-    console.error('URL generation error:', e);
-    return url;
-  }
-};
-
-const removeAllNumbers = (url: string) => {
-  return url.replace(/\d/g, '');
-};
-
-const checkUrl = async (url: string): Promise<string> => {
-  try {
-    const response = await ReactNativeBlobUtil.config({
-      followRedirect: false,
-      timeout: 3000,
-    }).fetch('GET', url);
-
-    const info = response.info();
-    const serverHeader = info.headers.server;
-    const cfrayHeader = info.headers['cf-ray'];
-    const pragmaHeader = info.headers.pragma;
-    const isOk = info.status === 200;
-
-    const locationHeader = info.headers.location;
-    const isRedirect = info.status === 301 || info.status === 302;
-
-    console.log(url, isOk, serverHeader, cfrayHeader, isRedirect, pragmaHeader);
-
-    if (isOk && serverHeader === 'cloudflare' && cfrayHeader && pragmaHeader) {
-      return url;
-    } else if (
-      isRedirect &&
-      locationHeader &&
-      removeAllNumbers(locationHeader) === removeAllNumbers(url)
-    ) {
-      if ((await checkUrl(locationHeader)) !== '') {
-        return locationHeader;
-      }
-    }
-
-    return '';
-  } catch {
-    return '';
-  }
-};
 
 function SettingApiLookupModal({
   visible,
@@ -97,7 +31,7 @@ function SettingApiLookupModal({
   const currentTheme = useMemo(() => {
     return isDark ? darkTheme : lightTheme;
   }, [isDark]);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const [isLookup, setIsLookup] = useState(false);
   const [baseUrl, setBaseUrl] = useState('');
   const [validUrls, setValidUrls] = useState<string[]>([]);
@@ -130,9 +64,9 @@ function SettingApiLookupModal({
       const url = generateLookupUrl(baseUrl, idx);
       currentLookupUrlRef.current = url;
       setCurrentLookupUrl(url);
-      const isOk = await checkUrl(url);
-      if (isOk) {
-        setValidUrls(prev => [...prev, url]);
+      const returnUrl = await checkUrl(url);
+      if (returnUrl !== '') {
+        setValidUrls(prev => [...prev, returnUrl]);
       }
       idx++;
     }
@@ -141,17 +75,26 @@ function SettingApiLookupModal({
     isLookupRef.current = false;
   }, [baseUrl]);
 
+  const handleClose = useCallback(() => {
+    if (isLookup) {
+      stopLookup();
+    }
+    setBaseUrl('');
+    setValidUrls([]);
+    onClose();
+  }, [onClose, isLookup, stopLookup]);
+
   return (
     <Modal
       visible={visible}
       transparent={true}
       animationType="fade"
-      onRequestClose={onClose}>
+      onRequestClose={handleClose}>
       <Pressable
-        style={[styles.overlay, {backgroundColor: currentTheme.cardOverlay}]}
-        onPress={onClose}>
-        <View style={[styles.container, {backgroundColor: currentTheme.card}]}>
-          <Text style={[styles.title, {color: currentTheme.text}]}>
+        style={[styles.overlay, { backgroundColor: currentTheme.cardOverlay }]}
+        onPress={handleClose}>
+        <View style={[styles.container, { backgroundColor: currentTheme.card }]}>
+          <Text style={[styles.title, { color: currentTheme.text }]}>
             {t('settings.lookupApiUrl')}
           </Text>
           <TextInput
@@ -169,15 +112,15 @@ function SettingApiLookupModal({
             placeholderTextColor={currentTheme.textSecondary}
             editable={!isLookup}
           />
-          <Text style={[styles.instruction, {color: currentTheme.text}]}>
+          <Text style={[styles.instruction, { color: currentTheme.text }]}>
             {t('settings.lookupApiUrlInstruction')}
           </Text>
           {!isLookup && (
             <TouchableOpacity
-              style={[styles.button, {backgroundColor: currentTheme.primary}]}
+              style={[styles.button, { backgroundColor: currentTheme.primary }]}
               onPress={startLookup}>
               <Text
-                style={[styles.buttonText, {color: currentTheme.textPrimary}]}>
+                style={[styles.buttonText, { color: currentTheme.textPrimary }]}>
                 {t('settings.lookupApiUrl')}
               </Text>
             </TouchableOpacity>
@@ -185,12 +128,12 @@ function SettingApiLookupModal({
           {isLookup && (
             <>
               <TouchableOpacity
-                style={[styles.button, {backgroundColor: currentTheme.primary}]}
+                style={[styles.button, { backgroundColor: currentTheme.primary }]}
                 onPress={stopLookup}>
                 <Text
                   style={[
                     styles.buttonText,
-                    {color: currentTheme.textPrimary},
+                    { color: currentTheme.textPrimary },
                   ]}>
                   {t('settings.stopLookup')}
                 </Text>
@@ -198,7 +141,7 @@ function SettingApiLookupModal({
               <View style={styles.indicatorContainer}>
                 <ActivityIndicator color={currentTheme.primary} />
                 <Text
-                  style={[styles.indicatorText, {color: currentTheme.text}]}>
+                  style={[styles.indicatorText, { color: currentTheme.text }]}>
                   {t('settings.searching')} {currentLookupUrl}
                 </Text>
               </View>
@@ -212,15 +155,19 @@ function SettingApiLookupModal({
                   key={index}
                   style={[
                     styles.listItem,
-                    {borderBottomColor: currentTheme.border},
+                    { borderBottomColor: currentTheme.border },
                   ]}
                   onPress={() => {
                     onSubmit(url);
+                    handleClose();
                   }}>
                   <Text style={styles.listItemText}>{url}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
+          )}
+          {validUrls.length === 0 && (
+            <Text style={styles.noValidUrls}>{t('settings.noValidUrls')}</Text>
           )}
         </View>
       </Pressable>
@@ -240,7 +187,9 @@ const styles = StyleSheet.create({
     padding: 20,
     elevation: 5,
     gap: 10,
-    maxHeight: '80%',
+    height: '65%',
+    display: 'flex',
+    flexDirection: 'column',
   },
   title: {
     fontSize: 18,
@@ -279,6 +228,8 @@ const styles = StyleSheet.create({
   listContainer: {
     flex: 1,
     marginTop: 10,
+    minHeight: 100,
+    maxHeight: 300,
   },
   listTitle: {
     fontSize: 16,
@@ -289,6 +240,10 @@ const styles = StyleSheet.create({
   },
   listItemText: {
     fontSize: 14,
+  },
+  noValidUrls: {
+    fontSize: 14,
+    textAlign: 'center',
   },
 });
 

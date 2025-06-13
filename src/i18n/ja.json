@@ -34,6 +34,8 @@
     "lookupApiUrl": "API URL 検索",
     "lookupApiUrlInstruction": "使用したいAPIのベースURLを入力してください。",
     "stopLookup": "検索停止",
-    "searching": "検索中..."
+    "searching": "検索中...",
+    "validUrls": "有効なURL",
+    "noValidUrls": "まだインデックスされたURLがありません"
   }
 }
