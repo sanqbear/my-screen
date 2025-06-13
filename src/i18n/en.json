@@ -28,6 +28,8 @@
     "en": "English",
     "ja": "Japanese",
     "zh": "Chinese",
-    "apiUrl": "API URL"
+    "apiUrl": "API URL",
+    "setupApiUrl": "Setup API URL",
+    "apiUrlPlaceholder": "https://api.example.com"
   }
 }

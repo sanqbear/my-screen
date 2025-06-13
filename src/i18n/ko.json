@@ -28,6 +28,8 @@
     "en": "영어",
     "ja": "일본어",
     "zh": "중국어",
-    "apiUrl": "API 주소"
+    "apiUrl": "API 주소",
+    "setupApiUrl": "API 주소 설정",
+    "apiUrlPlaceholder": "https://api.example.com"
   }
 }
