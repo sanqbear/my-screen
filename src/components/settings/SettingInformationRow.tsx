@@ -16,31 +16,27 @@ function SettingInformationRow({
   isDark,
   onPress,
 }: SettingInformationRowProps): React.JSX.Element {
-  const color = useMemo(() => {
-    return isDark ? darkTheme.text : lightTheme.text;
+  const currentTheme = useMemo(() => {
+    return isDark ? darkTheme : lightTheme;
   }, [isDark]);
 
-  const backgroundColor = useMemo(() => {
-    return isDark ? darkTheme.background : lightTheme.background;
-  }, [isDark]);
-
-  const borderBottomColor = useMemo(() => {
-    return isDark ? darkTheme.border : lightTheme.border;
-  }, [isDark]);
-
-  const MemorizedSettingInformationRow = useMemo(() => {
-    return (
-      <TouchableOpacity
-        style={[styles.container, {backgroundColor, borderBottomColor}]}
-        onPress={onPress}
-        disabled={!onPress}>
-        <Text style={[styles.title, {color}]}>{title}</Text>
-        <Text style={[styles.content, {color}]}>{content}</Text>
-      </TouchableOpacity>
-    );
-  }, [backgroundColor, borderBottomColor, onPress, color, title, content]);
-
-  return MemorizedSettingInformationRow;
+  return (
+    <TouchableOpacity
+      style={[
+        styles.container,
+        {
+          backgroundColor: currentTheme.background,
+          borderBottomColor: currentTheme.border,
+        },
+      ]}
+      onPress={onPress}
+      disabled={!onPress}>
+      <Text style={[styles.title, {color: currentTheme.text}]}>{title}</Text>
+      <Text style={[styles.content, {color: currentTheme.text}]}>
+        {content}
+      </Text>
+    </TouchableOpacity>
+  );
 }
 
 const styles = StyleSheet.create({

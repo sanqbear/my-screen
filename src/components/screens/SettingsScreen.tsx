@@ -5,9 +5,11 @@ import {SafeAreaView, StyleSheet, useColorScheme} from 'react-native';
 import SettingInformationRow from '../settings/SettingInformationRow';
 import {useTranslation} from 'react-i18next';
 import SettingSelectModal from '../settings/SettingSelectModal';
+import SettingApiSetupModal from '../settings/SettingApiSetupModal';
 
 function SettingsScreen() {
-  const {theme, language, apiUrl, setTheme, setLanguage} = useAppStore();
+  const {theme, language, apiUrl, setTheme, setLanguage, setApiUrl} =
+    useAppStore();
   const {t} = useTranslation();
   const colorScheme = useColorScheme();
   const isDark = useMemo(() => {
@@ -18,6 +20,7 @@ function SettingsScreen() {
   }, [isDark]);
   const [isSettingModalVisible, setIsSettingModalVisible] = useState(false);
   const [isLanguageModalVisible, setIsLanguageModalVisible] = useState(false);
+  const [isApiUrlModalVisible, setIsApiUrlModalVisible] = useState(false);
 
   const handleThemePress = useCallback(
     (key: string) => {
@@ -33,6 +36,18 @@ function SettingsScreen() {
       setIsLanguageModalVisible(false);
     },
     [setLanguage],
+  );
+
+  const handleApiUrlSubmit = useCallback(
+    (url: string) => {
+      if (!url.startsWith('http')) {
+        setApiUrl(`https://${url}`);
+      } else {
+        setApiUrl(url);
+      }
+      setIsApiUrlModalVisible(false);
+    },
+    [setApiUrl],
   );
 
   return (
@@ -54,7 +69,7 @@ function SettingsScreen() {
         title={t('settings.apiUrl')}
         content={apiUrl}
         isDark={isDark}
-        onPress={() => {}}
+        onPress={() => setIsApiUrlModalVisible(true)}
       />
       <SettingSelectModal
         visible={isSettingModalVisible}
@@ -82,6 +97,13 @@ function SettingsScreen() {
         selectedKey={language}
         onPressItem={handleLanguagePress}
         onClose={() => setIsLanguageModalVisible(false)}
+      />
+      <SettingApiSetupModal
+        visible={isApiUrlModalVisible}
+        isDark={isDark}
+        value={apiUrl}
+        onSubmit={handleApiUrlSubmit}
+        onClose={() => setIsApiUrlModalVisible(false)}
       />
     </SafeAreaView>
   );

@@ -31,84 +31,54 @@ function SettingSelectModal({
   onPressItem,
   onClose,
 }: SettingSelectModalProps) {
-  const overlayColor = useMemo(() => {
-    return isDark ? darkTheme.cardOverlay : lightTheme.cardOverlay;
-  }, [isDark]);
-  const containerBackgroundColor = useMemo(() => {
-    return isDark ? darkTheme.card : lightTheme.card;
-  }, [isDark]);
-  const itemSelectedBackgroundColor = useMemo(() => {
-    return isDark ? darkTheme.primary : lightTheme.primary;
-  }, [isDark]);
-  const textColor = useMemo(() => {
-    return isDark ? darkTheme.text : lightTheme.text;
-  }, [isDark]);
-  const textPrimaryColor = useMemo(() => {
-    return isDark ? darkTheme.textPrimary : lightTheme.textPrimary;
+  const currentTheme = useMemo(() => {
+    return isDark ? darkTheme : lightTheme;
   }, [isDark]);
 
-  const MemorizedModal = useMemo(() => {
-    return (
-      <Modal
-        visible={visible}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={onClose}>
-        <Pressable
-          style={[styles.overlay, {backgroundColor: overlayColor}]}
-          onPress={onClose}>
-          <View
-            style={[
-              styles.container,
-              {backgroundColor: containerBackgroundColor},
-            ]}>
-            <Text numberOfLines={1} style={[styles.title, {color: textColor}]}>
-              {title}
-            </Text>
-            <View style={styles.itemsContainer}>
-              {items.map(item => {
-                const isSelected = item.key === selectedKey;
-                return (
-                  <TouchableOpacity
-                    key={item.key}
-                    onPress={() => onPressItem(item.key)}
+  return (
+    <Modal
+      visible={visible}
+      transparent={true}
+      animationType="fade"
+      onRequestClose={onClose}>
+      <Pressable
+        style={[styles.overlay, {backgroundColor: currentTheme.cardOverlay}]}
+        onPress={onClose}>
+        <View style={[styles.container, {backgroundColor: currentTheme.card}]}>
+          <Text
+            numberOfLines={1}
+            style={[styles.title, {color: currentTheme.text}]}>
+            {title}
+          </Text>
+          <View style={styles.itemsContainer}>
+            {items.map(item => {
+              const isSelected = item.key === selectedKey;
+              return (
+                <TouchableOpacity
+                  key={item.key}
+                  onPress={() => onPressItem(item.key)}
+                  style={[
+                    styles.item,
+                    isSelected && {
+                      backgroundColor: currentTheme.primary,
+                    },
+                  ]}>
+                  <Text
                     style={[
-                      styles.item,
-                      isSelected && {
-                        backgroundColor: itemSelectedBackgroundColor,
-                      },
+                      styles.itemText,
+                      isSelected && {color: currentTheme.textPrimary},
+                      !isSelected && {color: currentTheme.text},
                     ]}>
-                    <Text
-                      style={[
-                        styles.itemText,
-                        isSelected && {color: textPrimaryColor},
-                        !isSelected && {color: textColor},
-                      ]}>
-                      {item.name}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
+                    {item.name}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
-        </Pressable>
-      </Modal>
-    );
-  }, [
-    overlayColor,
-    itemSelectedBackgroundColor,
-    textColor,
-    containerBackgroundColor,
-    textPrimaryColor,
-    items,
-    onClose,
-    onPressItem,
-    selectedKey,
-    title,
-    visible,
-  ]);
-
-  return MemorizedModal;
+        </View>
+      </Pressable>
+    </Modal>
+  );
 }
 
 const styles = StyleSheet.create({

@@ -13,25 +13,19 @@ function SettingButton({
   isDark,
   onPress,
 }: SettingButtonProps): React.JSX.Element {
-  const backgroundColor = useMemo(() => {
-    return isDark ? darkTheme.background : lightTheme.background;
+  const currentTheme = useMemo(() => {
+    return isDark ? darkTheme : lightTheme;
   }, [isDark]);
 
-  const color = useMemo(() => {
-    return isDark ? darkTheme.text : lightTheme.text;
-  }, [isDark]);
-
-  const MemorizedSettingButton = useMemo(() => {
-    return (
-      <TouchableOpacity
-        style={[styles.button, {backgroundColor}]}
-        onPress={onPress}>
-        <Text style={[styles.buttonText, {color}]}>{title}</Text>
-      </TouchableOpacity>
-    );
-  }, [backgroundColor, color, onPress, title]);
-
-  return MemorizedSettingButton;
+  return (
+    <TouchableOpacity
+      style={[styles.button, {backgroundColor: currentTheme.primary}]}
+      onPress={onPress}>
+      <Text style={[styles.buttonText, {color: currentTheme.textPrimary}]}>
+        {title}
+      </Text>
+    </TouchableOpacity>
+  );
 }
 
 const styles = StyleSheet.create({
