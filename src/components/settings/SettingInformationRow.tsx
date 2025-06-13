@@ -1,40 +1,33 @@
-import {darkTheme, lightTheme} from '@/types';
-import React, {useMemo} from 'react';
-import {StyleSheet, TouchableOpacity} from 'react-native';
-import {Text} from 'react-native';
+import {Theme} from '@/types';
+import React from 'react';
+import {StyleSheet, TouchableOpacity, Text} from 'react-native';
 
 interface SettingInformationRowProps {
   title: string;
   content: string;
-  isDark: boolean;
+  theme: Theme;
   onPress: () => void;
 }
 
 function SettingInformationRow({
   title,
   content,
-  isDark,
+  theme,
   onPress,
 }: SettingInformationRowProps): React.JSX.Element {
-  const currentTheme = useMemo(() => {
-    return isDark ? darkTheme : lightTheme;
-  }, [isDark]);
-
   return (
     <TouchableOpacity
       style={[
         styles.container,
         {
-          backgroundColor: currentTheme.background,
-          borderBottomColor: currentTheme.border,
+          backgroundColor: theme.background,
+          borderBottomColor: theme.border,
         },
       ]}
       onPress={onPress}
       disabled={!onPress}>
-      <Text style={[styles.title, {color: currentTheme.text}]}>{title}</Text>
-      <Text style={[styles.content, {color: currentTheme.text}]}>
-        {content}
-      </Text>
+      <Text style={[styles.title, {color: theme.text}]}>{title}</Text>
+      <Text style={[styles.content, {color: theme.text}]}>{content}</Text>
     </TouchableOpacity>
   );
 }

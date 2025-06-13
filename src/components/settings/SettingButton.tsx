@@ -1,27 +1,23 @@
-import React, {useMemo} from 'react';
+import {Theme} from '@/types';
+import React from 'react';
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
-import {darkTheme, lightTheme} from '@/types';
 
 interface SettingButtonProps {
   title: string;
-  isDark: boolean;
+  theme: Theme;
   onPress: () => void;
 }
 
 function SettingButton({
   title,
-  isDark,
+  theme,
   onPress,
 }: SettingButtonProps): React.JSX.Element {
-  const currentTheme = useMemo(() => {
-    return isDark ? darkTheme : lightTheme;
-  }, [isDark]);
-
   return (
     <TouchableOpacity
-      style={[styles.button, {backgroundColor: currentTheme.primary}]}
+      style={[styles.button, {backgroundColor: theme.primary}]}
       onPress={onPress}>
-      <Text style={[styles.buttonText, {color: currentTheme.textPrimary}]}>
+      <Text style={[styles.buttonText, {color: theme.textPrimary}]}>
         {title}
       </Text>
     </TouchableOpacity>

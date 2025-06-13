@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { darkTheme, lightTheme } from '@/types';
-import { useTranslation } from 'react-i18next';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {Theme} from '@/types';
+import {useTranslation} from 'react-i18next';
 import {
   ActivityIndicator,
   Modal,
@@ -12,26 +12,22 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { checkUrl, generateLookupUrl } from '@/api';
+import {checkUrl, generateLookupUrl} from '@/api';
 
 interface SettingApiLookupModalProps {
   visible: boolean;
-  isDark: boolean;
+  theme: Theme;
   onSubmit: (url: string) => void;
   onClose: () => void;
 }
 
-
 function SettingApiLookupModal({
   visible,
-  isDark,
+  theme,
   onSubmit,
   onClose,
 }: SettingApiLookupModalProps) {
-  const currentTheme = useMemo(() => {
-    return isDark ? darkTheme : lightTheme;
-  }, [isDark]);
-  const { t } = useTranslation();
+  const {t} = useTranslation();
   const [isLookup, setIsLookup] = useState(false);
   const [baseUrl, setBaseUrl] = useState('');
   const [validUrls, setValidUrls] = useState<string[]>([]);
@@ -51,7 +47,7 @@ function SettingApiLookupModal({
     isLookupRef.current = false;
   }, []);
 
-  const startLookup = useCallback(async () => {
+  const startLookup = async () => {
     setIsLookup(true);
     isLookupRef.current = true;
     setCurrentLookupUrl('');
@@ -66,14 +62,16 @@ function SettingApiLookupModal({
       setCurrentLookupUrl(url);
       const returnUrl = await checkUrl(url);
       if (returnUrl !== '') {
-        setValidUrls(prev => [...prev, returnUrl]);
+        if (!validUrls.includes(returnUrl)) {
+          setValidUrls(prev => [...prev, returnUrl]);
+        }
+        idx++;
       }
-      idx++;
     }
 
     setIsLookup(false);
     isLookupRef.current = false;
-  }, [baseUrl]);
+  };
 
   const handleClose = useCallback(() => {
     if (isLookup) {
@@ -91,36 +89,35 @@ function SettingApiLookupModal({
       animationType="fade"
       onRequestClose={handleClose}>
       <Pressable
-        style={[styles.overlay, { backgroundColor: currentTheme.cardOverlay }]}
+        style={[styles.overlay, {backgroundColor: theme.cardOverlay}]}
         onPress={handleClose}>
-        <View style={[styles.container, { backgroundColor: currentTheme.card }]}>
-          <Text style={[styles.title, { color: currentTheme.text }]}>
+        <View style={[styles.container, {backgroundColor: theme.card}]}>
+          <Text style={[styles.title, {color: theme.text}]}>
             {t('settings.lookupApiUrl')}
           </Text>
           <TextInput
             style={[
               styles.input,
               {
-                color: currentTheme.text,
-                borderColor: currentTheme.border,
-                backgroundColor: currentTheme.background,
+                color: theme.text,
+                borderColor: theme.border,
+                backgroundColor: theme.background,
               },
             ]}
             value={baseUrl}
             onChangeText={setBaseUrl}
             placeholder={t('settings.apiUrlPlaceholder')}
-            placeholderTextColor={currentTheme.textSecondary}
+            placeholderTextColor={theme.textSecondary}
             editable={!isLookup}
           />
-          <Text style={[styles.instruction, { color: currentTheme.text }]}>
+          <Text style={[styles.instruction, {color: theme.text}]}>
             {t('settings.lookupApiUrlInstruction')}
           </Text>
           {!isLookup && (
             <TouchableOpacity
-              style={[styles.button, { backgroundColor: currentTheme.primary }]}
+              style={[styles.button, {backgroundColor: theme.primary}]}
               onPress={startLookup}>
-              <Text
-                style={[styles.buttonText, { color: currentTheme.textPrimary }]}>
+              <Text style={[styles.buttonText, {color: theme.textPrimary}]}>
                 {t('settings.lookupApiUrl')}
               </Text>
             </TouchableOpacity>
@@ -128,20 +125,15 @@ function SettingApiLookupModal({
           {isLookup && (
             <>
               <TouchableOpacity
-                style={[styles.button, { backgroundColor: currentTheme.primary }]}
+                style={[styles.button, {backgroundColor: theme.primary}]}
                 onPress={stopLookup}>
-                <Text
-                  style={[
-                    styles.buttonText,
-                    { color: currentTheme.textPrimary },
-                  ]}>
+                <Text style={[styles.buttonText, {color: theme.textPrimary}]}>
                   {t('settings.stopLookup')}
                 </Text>
               </TouchableOpacity>
               <View style={styles.indicatorContainer}>
-                <ActivityIndicator color={currentTheme.primary} />
-                <Text
-                  style={[styles.indicatorText, { color: currentTheme.text }]}>
+                <ActivityIndicator color={theme.primary} />
+                <Text style={[styles.indicatorText, {color: theme.text}]}>
                   {t('settings.searching')} {currentLookupUrl}
                 </Text>
               </View>
@@ -153,10 +145,7 @@ function SettingApiLookupModal({
               {validUrls.map((url, index) => (
                 <TouchableOpacity
                   key={index}
-                  style={[
-                    styles.listItem,
-                    { borderBottomColor: currentTheme.border },
-                  ]}
+                  style={[styles.listItem, {borderBottomColor: theme.border}]}
                   onPress={() => {
                     onSubmit(url);
                     handleClose();

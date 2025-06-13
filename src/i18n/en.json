@@ -1,6 +1,10 @@
 {
   "home": {
-    "title": "Home"
+    "title": "Home",
+    "recentlyAdded": "Recently Added",
+    "library": "Library",
+    "weekly": "Weekly",
+    "viewAll": "View All"
   },
   "recentlyAdded": {
     "title": "Recently Added"

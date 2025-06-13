@@ -1,6 +1,10 @@
 {
   "home": {
-    "title": "ホーム"
+    "title": "ホーム",
+    "recentlyAdded": "最近追加された",
+    "viewAll": "すべて見る",
+    "weekly": "週刊",
+    "library": "ライブラリ"
   },
   "recentlyAdded": {
     "title": "最近追加された"

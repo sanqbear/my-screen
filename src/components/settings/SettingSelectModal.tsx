@@ -1,5 +1,4 @@
-import {darkTheme, lightTheme} from '@/types';
-import {useMemo} from 'react';
+import {Theme} from '@/types';
 import {
   Modal,
   Pressable,
@@ -16,7 +15,7 @@ interface SettingSelectModalProps {
     key: string;
     name: string;
   }[];
-  isDark: boolean;
+  theme: Theme;
   selectedKey: string | null;
   onPressItem: (key: string) => void;
   onClose: () => void;
@@ -27,14 +26,10 @@ function SettingSelectModal({
   title,
   items,
   selectedKey,
-  isDark,
+  theme,
   onPressItem,
   onClose,
 }: SettingSelectModalProps) {
-  const currentTheme = useMemo(() => {
-    return isDark ? darkTheme : lightTheme;
-  }, [isDark]);
-
   return (
     <Modal
       visible={visible}
@@ -42,12 +37,10 @@ function SettingSelectModal({
       animationType="fade"
       onRequestClose={onClose}>
       <Pressable
-        style={[styles.overlay, {backgroundColor: currentTheme.cardOverlay}]}
+        style={[styles.overlay, {backgroundColor: theme.cardOverlay}]}
         onPress={onClose}>
-        <View style={[styles.container, {backgroundColor: currentTheme.card}]}>
-          <Text
-            numberOfLines={1}
-            style={[styles.title, {color: currentTheme.text}]}>
+        <View style={[styles.container, {backgroundColor: theme.card}]}>
+          <Text numberOfLines={1} style={[styles.title, {color: theme.text}]}>
             {title}
           </Text>
           <View style={styles.itemsContainer}>
@@ -60,14 +53,14 @@ function SettingSelectModal({
                   style={[
                     styles.item,
                     isSelected && {
-                      backgroundColor: currentTheme.primary,
+                      backgroundColor: theme.primary,
                     },
                   ]}>
                   <Text
                     style={[
                       styles.itemText,
-                      isSelected && {color: currentTheme.textPrimary},
-                      !isSelected && {color: currentTheme.text},
+                      isSelected && {color: theme.textPrimary},
+                      !isSelected && {color: theme.text},
                     ]}>
                     {item.name}
                   </Text>

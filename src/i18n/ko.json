@@ -1,6 +1,10 @@
 {
   "home": {
-    "title": "메인"
+    "title": "메인",
+    "recentlyAdded": "최근 추가됨",
+    "viewAll": "모두 보기",
+    "library": "작품 목록",
+    "weekly": "주간 작품"
   },
   "recentlyAdded": {
     "title": "최근 추가됨"

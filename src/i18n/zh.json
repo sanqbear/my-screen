@@ -1,6 +1,10 @@
 {
   "home": {
-    "title": "主页"
+    "title": "主页",
+    "recentlyAdded": "最近添加的",
+    "viewAll": "查看全部",
+    "library": "图书馆",
+    "weekly": "每周"
   },
   "recentlyAdded": {
     "title": "最近添加的"

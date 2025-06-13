@@ -1,7 +1,47 @@
-import ReactNativeBlobUtil from "react-native-blob-util";
+import useSessionStore from '@/store/sessionStore';
+import {parseHomeArtworks} from '@/utils/htmlParser';
+import ReactNativeBlobUtil from 'react-native-blob-util';
 
 const removeAllNumbers = (url: string) => {
   return url.replace(/\d/g, '');
+};
+
+const getHost = (url: string) => {
+  return url.match(/^https?:\/\/[^/]+/)?.[0] || '';
+};
+
+const getHtmlData = async (url: string) => {
+  try {
+    const options: {[key: string]: string} = {
+      Accept:
+        'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
+      'Cache-Control': 'max-age=0',
+      Connection: 'keep-alive',
+      'Upgrade-Insecure-Requests': '1',
+    };
+    const currentPhpSession = useSessionStore.getState().phpSession;
+
+    if (currentPhpSession) {
+      options.Cookie = `PHPSESSID=${currentPhpSession}`;
+    }
+
+    const response = await ReactNativeBlobUtil.config({
+      followRedirect: false,
+      timeout: 3000,
+    }).fetch('GET', url, options);
+    const info = response.info();
+    const headers = info.headers;
+    const setCookie = headers.setCookie;
+    const phpSession = setCookie?.PHPSESSID;
+    if (phpSession) {
+      useSessionStore.getState().setPhpSession(phpSession);
+    }
+    return response.data;
+  } catch (e) {
+    console.error('GET HTML DATA ERROR:', e);
+  }
 };
 
 export const generateLookupUrl = (url: string, index: number) => {
@@ -65,4 +105,11 @@ export const checkUrl = async (url: string): Promise<string> => {
   } catch {
     return '';
   }
+};
+
+export const getHomepageData = async (url: string) => {
+  const htmlData = await getHtmlData(url);
+  const host = getHost(url);
+  const homeArtworks = parseHomeArtworks(htmlData, host);
+  return homeArtworks;
 };

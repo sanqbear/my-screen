@@ -14,15 +14,11 @@ function SettingsStackNavigator() {
   const {t} = useTranslation();
   const {theme} = useAppStore();
   const colorScheme = useColorScheme();
-  const isDark = useMemo(() => {
-    return theme === 'dark' || (theme === 'system' && colorScheme === 'dark');
+  const currentTheme = useMemo(() => {
+    return theme === 'dark' || (theme === 'system' && colorScheme === 'dark')
+      ? darkTheme
+      : lightTheme;
   }, [theme, colorScheme]);
-  const backgroundColor = useMemo(() => {
-    return isDark ? darkTheme.background : lightTheme.background;
-  }, [isDark]);
-  const headerTintColor = useMemo(() => {
-    return isDark ? darkTheme.text : lightTheme.text;
-  }, [isDark]);
 
   return (
     <Stack.Navigator
@@ -30,16 +26,19 @@ function SettingsStackNavigator() {
       screenOptions={{
         ...stackOptions,
         headerStyle: {
-          backgroundColor,
+          backgroundColor: currentTheme.background,
         },
         contentStyle: {
-          backgroundColor,
+          backgroundColor: currentTheme.background,
         },
       }}>
       <Stack.Screen
         name="SettingsStack"
         component={SettingsScreen}
-        options={{title: t('settings.title'), headerTintColor}}
+        options={{
+          title: t('settings.title'),
+          headerTintColor: currentTheme.text,
+        }}
       />
     </Stack.Navigator>
   );

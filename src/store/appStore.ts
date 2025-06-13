@@ -1,13 +1,13 @@
-import {Language, Theme} from '@/types';
+import { Language, ThemeType } from '@/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {create} from 'zustand';
-import {createJSONStorage, persist} from 'zustand/middleware';
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface AppState {
-  theme: Theme;
+  theme: ThemeType;
   language: Language;
   apiUrl: string;
-  setTheme: (theme: Theme) => void;
+  setTheme: (theme: ThemeType) => void;
   setLanguage: (language: Language) => void;
   setApiUrl: (url: string) => void;
 }
@@ -18,9 +18,9 @@ const useAppStore = create<AppState>()(
       theme: 'system',
       language: 'ko',
       apiUrl: '',
-      setTheme: (theme: Theme) => set({theme}),
-      setLanguage: (language: Language) => set({language}),
-      setApiUrl: (url: string) => set({apiUrl: url}),
+      setTheme: (theme: ThemeType) => set({ theme }),
+      setLanguage: (language: Language) => set({ language }),
+      setApiUrl: (url: string) => set({ apiUrl: url }),
     }),
     {
       name: 'app-storage',

@@ -1,5 +1,5 @@
 import useAppStore from '@/store/appStore';
-import {darkTheme, lightTheme} from '@/types';
+import {darkTheme, lightTheme, ThemeType} from '@/types';
 import React, {useCallback, useMemo, useState} from 'react';
 import {SafeAreaView, StyleSheet, useColorScheme} from 'react-native';
 import SettingInformationRow from '../settings/SettingInformationRow';
@@ -13,12 +13,11 @@ function SettingsScreen() {
     useAppStore();
   const {t} = useTranslation();
   const colorScheme = useColorScheme();
-  const isDark = useMemo(() => {
-    return theme === 'dark' || (theme === 'system' && colorScheme === 'dark');
-  }, [theme, colorScheme]);
   const currentTheme = useMemo(() => {
-    return isDark ? darkTheme : lightTheme;
-  }, [isDark]);
+    return theme === 'dark' || (theme === 'system' && colorScheme === 'dark')
+      ? darkTheme
+      : lightTheme;
+  }, [theme, colorScheme]);
   const [isSettingModalVisible, setIsSettingModalVisible] = useState(false);
   const [isLanguageModalVisible, setIsLanguageModalVisible] = useState(false);
   const [isApiUrlModalVisible, setIsApiUrlModalVisible] = useState(false);
@@ -26,7 +25,7 @@ function SettingsScreen() {
 
   const handleThemePress = useCallback(
     (key: string) => {
-      setTheme(key as 'light' | 'dark' | 'system');
+      setTheme(key as ThemeType);
       setIsSettingModalVisible(false);
     },
     [setTheme],
@@ -63,19 +62,19 @@ function SettingsScreen() {
       <SettingInformationRow
         title={t('settings.theme')}
         content={t(`settings.${theme}`)}
-        isDark={isDark}
+        theme={currentTheme}
         onPress={() => setIsSettingModalVisible(true)}
       />
       <SettingInformationRow
         title={t('settings.language')}
         content={t(`settings.${language}`)}
-        isDark={isDark}
+        theme={currentTheme}
         onPress={() => setIsLanguageModalVisible(true)}
       />
       <SettingInformationRow
         title={t('settings.apiUrl')}
         content={apiUrl}
-        isDark={isDark}
+        theme={currentTheme}
         onPress={() => setIsApiUrlModalVisible(true)}
       />
       <SettingSelectModal
@@ -86,7 +85,7 @@ function SettingsScreen() {
           {key: 'dark', name: t('settings.dark')},
           {key: 'system', name: t('settings.system')},
         ]}
-        isDark={isDark}
+        theme={currentTheme}
         selectedKey={theme}
         onPressItem={handleThemePress}
         onClose={() => setIsSettingModalVisible(false)}
@@ -100,20 +99,20 @@ function SettingsScreen() {
           {key: 'ja', name: t('settings.ja')},
           {key: 'zh', name: t('settings.zh')},
         ]}
-        isDark={isDark}
+        theme={currentTheme}
         selectedKey={language}
         onPressItem={handleLanguagePress}
         onClose={() => setIsLanguageModalVisible(false)}
       />
       <SettingApiLookupModal
         visible={isApiLookupModalVisible}
-        isDark={isDark}
+        theme={currentTheme}
         onSubmit={handleApiUrlSubmit}
         onClose={() => setIsApiLookupModalVisible(false)}
       />
       <SettingApiSetupModal
         visible={isApiUrlModalVisible}
-        isDark={isDark}
+        theme={currentTheme}
         value={apiUrl}
         onSubmit={handleApiUrlSubmit}
         onPressLookup={handleApiUrlLookup}

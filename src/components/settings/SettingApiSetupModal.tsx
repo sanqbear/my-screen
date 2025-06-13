@@ -1,5 +1,5 @@
-import { darkTheme, lightTheme } from '@/types';
-import { useEffect, useMemo, useState } from 'react';
+import {Theme} from '@/types';
+import {useEffect, useState} from 'react';
 import {
   Modal,
   Pressable,
@@ -8,12 +8,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useTranslation } from 'react-i18next';
-import { TextInput } from 'react-native-gesture-handler';
+import {useTranslation} from 'react-i18next';
+import {TextInput} from 'react-native-gesture-handler';
 
 interface SettingApiSetupModalProps {
   visible: boolean;
-  isDark: boolean;
+  theme: Theme;
   value: string;
   onSubmit: (url: string) => void;
   onPressLookup: () => void;
@@ -22,21 +22,18 @@ interface SettingApiSetupModalProps {
 
 function SettingApiSetupModal({
   visible,
-  isDark,
+  theme,
   value,
   onSubmit,
   onPressLookup,
   onClose,
 }: SettingApiSetupModalProps) {
-  const currentTheme = useMemo(() => {
-    return isDark ? darkTheme : lightTheme;
-  }, [isDark]);
-  const { t } = useTranslation();
+  const {t} = useTranslation();
   const [inputUrl, setInputUrl] = useState('');
 
   useEffect(() => {
     setInputUrl(value);
-  }, [value])
+  }, [value]);
 
   return (
     <Modal
@@ -45,41 +42,37 @@ function SettingApiSetupModal({
       animationType="fade"
       onRequestClose={onClose}>
       <Pressable
-        style={[styles.overlay, { backgroundColor: currentTheme.cardOverlay }]}
+        style={[styles.overlay, {backgroundColor: theme.cardOverlay}]}
         onPress={onClose}>
-        <View style={[styles.container, { backgroundColor: currentTheme.card }]}>
-          <Text
-            numberOfLines={1}
-            style={[styles.title, { color: currentTheme.text }]}>
+        <View style={[styles.container, {backgroundColor: theme.card}]}>
+          <Text numberOfLines={1} style={[styles.title, {color: theme.text}]}>
             {t('settings.setupApiUrl')}
           </Text>
           <TextInput
             style={[
               styles.input,
               {
-                color: currentTheme.text,
-                borderColor: currentTheme.border,
-                backgroundColor: currentTheme.background,
+                color: theme.text,
+                borderColor: theme.border,
+                backgroundColor: theme.background,
               },
             ]}
             value={inputUrl}
             placeholder={t('settings.apiUrlPlaceholder')}
-            placeholderTextColor={currentTheme.textSecondary}
+            placeholderTextColor={theme.textSecondary}
             onChangeText={setInputUrl}
           />
           <TouchableOpacity
-            style={[styles.button, { backgroundColor: currentTheme.primary }]}
+            style={[styles.button, {backgroundColor: theme.primary}]}
             onPress={() => onSubmit(inputUrl)}>
-            <Text
-              style={[styles.buttonText, { color: currentTheme.textPrimary }]}>
+            <Text style={[styles.buttonText, {color: theme.textPrimary}]}>
               {t('settings.setupApiUrl')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.button, { backgroundColor: currentTheme.primary }]}
+            style={[styles.button, {backgroundColor: theme.primary}]}
             onPress={onPressLookup}>
-            <Text
-              style={[styles.buttonText, { color: currentTheme.textPrimary }]}>
+            <Text style={[styles.buttonText, {color: theme.textPrimary}]}>
               {t('settings.lookupApiUrl')}
             </Text>
           </TouchableOpacity>
