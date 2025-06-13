@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 
-interface SettingModalProps {
+interface SettingSelectModalProps {
   visible: boolean;
   title: string;
   items: {
@@ -18,24 +18,33 @@ interface SettingModalProps {
   }[];
   isDark: boolean;
   selectedKey: string | null;
-  onPress: (key: string) => void;
+  onPressItem: (key: string) => void;
   onClose: () => void;
 }
 
-function SettingModal({
+function SettingSelectModal({
   visible,
   title,
   items,
   selectedKey,
   isDark,
-  onPress,
+  onPressItem,
   onClose,
-}: SettingModalProps) {
-  const itemBackgroundColor = useMemo(() => {
-    return isDark ? darkTheme.colors.background : lightTheme.colors.background;
+}: SettingSelectModalProps) {
+  const overlayColor = useMemo(() => {
+    return isDark ? darkTheme.cardOverlay : lightTheme.cardOverlay;
   }, [isDark]);
-  const itemTextColor = useMemo(() => {
-    return isDark ? darkTheme.colors.text : lightTheme.colors.text;
+  const containerBackgroundColor = useMemo(() => {
+    return isDark ? darkTheme.card : lightTheme.card;
+  }, [isDark]);
+  const itemSelectedBackgroundColor = useMemo(() => {
+    return isDark ? darkTheme.primary : lightTheme.primary;
+  }, [isDark]);
+  const textColor = useMemo(() => {
+    return isDark ? darkTheme.text : lightTheme.text;
+  }, [isDark]);
+  const textPrimaryColor = useMemo(() => {
+    return isDark ? darkTheme.textPrimary : lightTheme.textPrimary;
   }, [isDark]);
 
   const MemorizedModal = useMemo(() => {
@@ -45,9 +54,15 @@ function SettingModal({
         transparent={true}
         animationType="fade"
         onRequestClose={onClose}>
-        <Pressable style={styles.overlay} onPress={onClose}>
-          <View style={styles.container}>
-            <Text numberOfLines={1} style={styles.title}>
+        <Pressable
+          style={[styles.overlay, {backgroundColor: overlayColor}]}
+          onPress={onClose}>
+          <View
+            style={[
+              styles.container,
+              {backgroundColor: containerBackgroundColor},
+            ]}>
+            <Text numberOfLines={1} style={[styles.title, {color: textColor}]}>
               {title}
             </Text>
             <View style={styles.itemsContainer}>
@@ -56,14 +71,19 @@ function SettingModal({
                 return (
                   <TouchableOpacity
                     key={item.key}
-                    onPress={() => onPress(item.key)}
+                    onPress={() => onPressItem(item.key)}
                     style={[
                       styles.item,
                       isSelected && {
-                        backgroundColor: itemBackgroundColor,
+                        backgroundColor: itemSelectedBackgroundColor,
                       },
                     ]}>
-                    <Text style={[styles.itemText, {color: itemTextColor}]}>
+                    <Text
+                      style={[
+                        styles.itemText,
+                        isSelected && {color: textPrimaryColor},
+                        !isSelected && {color: textColor},
+                      ]}>
                       {item.name}
                     </Text>
                   </TouchableOpacity>
@@ -75,11 +95,14 @@ function SettingModal({
       </Modal>
     );
   }, [
-    itemBackgroundColor,
-    itemTextColor,
+    overlayColor,
+    itemSelectedBackgroundColor,
+    textColor,
+    containerBackgroundColor,
+    textPrimaryColor,
     items,
     onClose,
-    onPress,
+    onPressItem,
     selectedKey,
     title,
     visible,
@@ -91,7 +114,6 @@ function SettingModal({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -120,4 +142,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SettingModal;
+export default SettingSelectModal;

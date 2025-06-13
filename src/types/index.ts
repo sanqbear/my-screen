@@ -2,23 +2,25 @@ export type Language = 'en' | 'ko' | 'ja' | 'zh';
 export type Theme = 'system' | 'light' | 'dark';
 
 export const lightTheme = {
-  colors: {
-    primary: '#007AFF',
-    background: '#FFFFFF',
-    text: '#000000',
-    secondary: '#757575',
-    border: '#E0E0E0',
-    card: '#F5F5F5',
-  },
+  primary: '#1B3F28', // primary의 어두운 버전
+  secondary: '#27553B', // secondary의 어두운 버전
+  background: '#EEEEEE', // 요청하신 배경
+  text: '#333333', // 검정 계열, 충분한 대비
+  textPrimary: '#FFFFFF', // 주요 텍스트
+  textSecondary: '#CCCCCC', // 부가 텍스트
+  border: '#CCCCCC', // 배경보다 조금 진한 경계
+  cardOverlay: 'rgba(0, 0, 0, 0.04)', // 연한 그림자/오버레이
+  card: '#F5F5F5', // background보다 조금 밝은 카드 배경
 };
 
 export const darkTheme = {
-  colors: {
-    primary: '#007AFF',
-    background: '#000000',
-    text: '#FFFFFF',
-    secondary: '#757575',
-    border: '#E0E0E0',
-    card: '#121212',
-  },
+  primary: '#ECFAE5', // 요청하신 주 색상
+  secondary: '#B5E6C3', // primary보다 살짝 짙고 채도 낮춘 보조 색
+  background: '#222222', // 짙은 배경
+  text: '#EEEEEE', // 밝은 그레이
+  textPrimary: '#111111', // 주요 텍스트
+  textSecondary: '#666666', // 부가 텍스트
+  border: '#444444', // 어두운 경계
+  cardOverlay: 'rgba(255, 255, 255, 0.05)', // 연한 오버레이
+  card: '#2A2A2A', // background보다 살짝 밝은 카드 배경
 };

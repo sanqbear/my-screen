@@ -14,11 +14,11 @@ function SettingButton({
   onPress,
 }: SettingButtonProps): React.JSX.Element {
   const backgroundColor = useMemo(() => {
-    return isDark ? darkTheme.colors.background : lightTheme.colors.background;
+    return isDark ? darkTheme.background : lightTheme.background;
   }, [isDark]);
 
   const color = useMemo(() => {
-    return isDark ? darkTheme.colors.text : lightTheme.colors.text;
+    return isDark ? darkTheme.text : lightTheme.text;
   }, [isDark]);
 
   const MemorizedSettingButton = useMemo(() => {

@@ -17,15 +17,15 @@ function SettingInformationRow({
   onPress,
 }: SettingInformationRowProps): React.JSX.Element {
   const color = useMemo(() => {
-    return isDark ? darkTheme.colors.text : lightTheme.colors.text;
+    return isDark ? darkTheme.text : lightTheme.text;
   }, [isDark]);
 
   const backgroundColor = useMemo(() => {
-    return isDark ? darkTheme.colors.background : lightTheme.colors.background;
+    return isDark ? darkTheme.background : lightTheme.background;
   }, [isDark]);
 
   const borderBottomColor = useMemo(() => {
-    return isDark ? darkTheme.colors.border : lightTheme.colors.border;
+    return isDark ? darkTheme.border : lightTheme.border;
   }, [isDark]);
 
   const MemorizedSettingInformationRow = useMemo(() => {
