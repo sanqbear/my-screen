@@ -1,0 +1,55 @@
+{
+  "common": {
+    "menu": "菜单",
+    "home": "首页",
+    "recentList": "最近",
+    "artworkList": "作品",
+    "historyList": "历史",
+    "settings": "设置",
+    "confirm": "确认",
+    "cancel": "取消",
+    "error": "错误",
+    "more": "更多"
+  },
+  "home": {
+    "title": "首页",
+    "recentArtworks": "最近的作品",
+    "recommendArtworks": "推荐的作品",
+    "weeklyArtworks": "每周的作品",
+    "apiError": {
+      "title": "错误",
+      "message": "获取数据失败。请在设置界面检查API URL。",
+      "goToSettings": "前往设置"
+    }
+  },
+  "settings": {
+    "title": "设置",
+    "theme": "主题",
+    "light": "浅色",
+    "dark": "深色",
+    "language": "语言",
+    "apiUrl": "API URL",
+    "currentTheme": "当前主题: {{theme}}",
+    "currentLanguage": "当前语言: {{language}}",
+    "currentApiUrl": "当前API URL: {{url}}",
+    "toggleTheme": "切换主题",
+    "toggleLanguage": "切换语言"
+  },
+  "urlLookup": {
+    "title": "API URL查询",
+    "enterBaseUrl": "请输入基础URL",
+    "startSearch": "开始搜索",
+    "stop": "停止",
+    "checking": "检查中:",
+    "foundUrls": "找到的URL:",
+    "close": "关闭"
+  },
+  "urlSetup": {
+    "title": "API URL设置",
+    "enterUrl": "请输入API URL",
+    "save": "保存",
+    "close": "关闭",
+    "errorEmpty": "请输入URL",
+    "errorInvalid": "无效的URL"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "common": {
+    "menu": "메뉴",
+    "home": "홈",
+    "recentList": "최신 작품",
+    "artworkList": "작품 목록",
+    "historyList": "감상 기록",
+    "settings": "설정",
+    "confirm": "확인",
+    "cancel": "취소",
+    "error": "오류",
+    "more": "더보기"
+  },
+  "home": {
+    "title": "홈 화면",
+    "recentArtworks": "최근 작품",
+    "recommendArtworks": "추천 작품",
+    "weeklyArtworks": "주간 작품",
+    "apiError": {
+      "title": "오류",
+      "message": "데이터를 가져오는데 실패했습니다. 설정 화면에서 API URL을 확인해주세요.",
+      "goToSettings": "설정으로 이동"
+    }
+  },
+  "settings": {
+    "title": "설정",
+    "theme": "테마",
+    "light": "라이트",
+    "dark": "다크",
+    "language": "언어",
+    "apiUrl": "API URL",
+    "currentTheme": "현재 테마: {{theme}}",
+    "currentLanguage": "현재 언어: {{language}}",
+    "currentApiUrl": "현재 API URL: {{url}}",
+    "toggleTheme": "테마 변경",
+    "toggleLanguage": "언어 변경"
+  },
+  "urlLookup": {
+    "title": "API URL 검색",
+    "enterBaseUrl": "기본 URL을 입력하세요",
+    "startSearch": "검색 시작",
+    "stop": "중지",
+    "checking": "확인 중:",
+    "foundUrls": "발견된 URL:",
+    "close": "닫기"
+  },
+  "urlSetup": {
+    "title": "API URL 직접 설정",
+    "enterUrl": "API URL을 입력하세요",
+    "save": "저장",
+    "close": "닫기",
+    "errorEmpty": "URL을 입력해주세요",
+    "errorInvalid": "유효하지 않은 URL입니다"
+  }
+}

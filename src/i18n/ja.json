@@ -1,55 +1,33 @@
 {
-  "common": {
-    "menu": "メニュー",
-    "home": "ホーム",
-    "recentList": "最近の作品",
-    "historyList": "履歴",
-    "artworkList": "作品",
-    "settings": "設定",
-    "confirm": "確認",
-    "cancel": "キャンセル",
-    "error": "エラー",
-    "more": "もっと"
-  },
   "home": {
-    "title": "ホーム画面",
-    "recentArtworks": "最近の作品",
-    "recommendArtworks": "おすすめの作品",
-    "weeklyArtworks": "週刊の作品",
-    "apiError": {
-      "title": "エラー",
-      "message": "データの取得に失敗しました。設定画面でAPI URLを確認してください。",
-      "goToSettings": "設定へ移動"
-    }
+    "title": "ホーム"
+  },
+  "recentlyAdded": {
+    "title": "最近追加された"
+  },
+  "recentlyViewed": {
+    "title": "最近見た"
+  },
+  "library": {
+    "title": "ライブラリ"
+  },
+  "bookmarks": {
+    "title": "ブックマーク"
+  },
+  "downloaded": {
+    "title": "ダウンロード"
   },
   "settings": {
     "title": "設定",
     "theme": "テーマ",
-    "light": "ライト",
     "dark": "ダーク",
+    "light": "ライト",
+    "system": "システム",
     "language": "言語",
-    "apiUrl": "API URL",
-    "currentTheme": "現在のテーマ: {{theme}}",
-    "currentLanguage": "現在の言語: {{language}}",
-    "currentApiUrl": "現在のAPI URL: {{url}}",
-    "toggleTheme": "テーマ切り替え",
-    "toggleLanguage": "言語切り替え"
-  },
-  "urlLookup": {
-    "title": "API URL検索",
-    "enterBaseUrl": "ベースURLを入力してください",
-    "startSearch": "検索開始",
-    "stop": "停止",
-    "checking": "確認中:",
-    "foundUrls": "見つかったURL:",
-    "close": "閉じる"
-  },
-  "urlSetup": {
-    "title": "API URL設定",
-    "enterUrl": "API URLを入力してください",
-    "save": "保存",
-    "close": "閉じる",
-    "errorEmpty": "URLを入力してください",
-    "errorInvalid": "無効なURLです"
+    "ko": "韓国語",
+    "en": "英語",
+    "ja": "日本語",
+    "zh": "中国語",
+    "apiUrl": "API URL"
   }
 }

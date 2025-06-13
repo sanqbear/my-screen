@@ -1,19 +1,27 @@
 import i18n from 'i18next';
 import {initReactI18next} from 'react-i18next';
-import ko from '@locales/ko.json';
-import en from '@locales/en.json';
-import ja from '@locales/ja.json';
-import zh from '@locales/zh.json';
+import en from '@/i18n/en.json';
+import ko from '@/i18n/ko.json';
+import ja from '@/i18n/ja.json';
+import zh from '@/i18n/zh.json';
 
 i18n.use(initReactI18next).init({
+  lng: 'en',
+  fallbackLng: 'en',
   resources: {
-    ko: {translation: ko},
-    en: {translation: en},
-    ja: {translation: ja},
-    zh: {translation: zh},
+    en: {
+      translation: en,
+    },
+    ko: {
+      translation: ko,
+    },
+    ja: {
+      translation: ja,
+    },
+    zh: {
+      translation: zh,
+    },
   },
-  lng: 'ko',
-  fallbackLng: 'ko',
   interpolation: {
     escapeValue: false,
   },

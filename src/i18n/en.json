@@ -1,55 +1,33 @@
 {
-  "common": {
-    "menu": "Menu",
-    "home": "Home",
-    "recentList": "Recent Artworks",
-    "historyList": "History",
-    "artworkList": "Artworks",
-    "settings": "Setting",
-    "confirm": "Confirm",
-    "cancel": "Cancel",
-    "error": "Error",
-    "more": "More"
-  },
   "home": {
-    "title": "Home Screen",
-    "recentArtworks": "Recent Artworks",
-    "recommendArtworks": "Recommend Artworks",
-    "weeklyArtworks": "Weekly Artworks",
-    "apiError": {
-      "title": "Error",
-      "message": "Failed to fetch data. Please check the API URL in the settings screen.",
-      "goToSettings": "Go to Settings"
-    }
+    "title": "Home"
+  },
+  "recentlyAdded": {
+    "title": "Recently Added"
+  },
+  "recentlyViewed": {
+    "title": "Recently Viewed"
+  },
+  "library": {
+    "title": "Library"
+  },
+  "bookmarks": {
+    "title": "Bookmarks"
+  },
+  "downloaded": {
+    "title": "Downloaded"
   },
   "settings": {
     "title": "Settings",
     "theme": "Theme",
-    "light": "Light",
     "dark": "Dark",
+    "light": "Light",
+    "system": "System",
     "language": "Language",
-    "apiUrl": "API URL",
-    "currentTheme": "Current Theme: {{theme}}",
-    "currentLanguage": "Current Language: {{language}}",
-    "currentApiUrl": "Current API URL: {{url}}",
-    "toggleTheme": "Toggle Theme",
-    "toggleLanguage": "Toggle Language"
-  },
-  "urlLookup": {
-    "title": "API URL Lookup",
-    "enterBaseUrl": "Enter base URL",
-    "startSearch": "Start Search",
-    "stop": "Stop",
-    "checking": "Checking:",
-    "foundUrls": "Found URLs:",
-    "close": "Close"
-  },
-  "urlSetup": {
-    "title": "API URL Setup",
-    "enterUrl": "Enter API URL",
-    "save": "Save",
-    "close": "Close",
-    "errorEmpty": "Please enter a URL",
-    "errorInvalid": "Invalid URL"
+    "ko": "Korean",
+    "en": "English",
+    "ja": "Japanese",
+    "zh": "Chinese",
+    "apiUrl": "API URL"
   }
 }
